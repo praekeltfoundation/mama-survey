@@ -18,12 +18,12 @@ class Questionnaire(models.Model):
     """
     title = models.CharField(max_length=100, blank=False)
     introduction_text = models.TextField(blank=False)
-    thank_you_text = models.CharField(blank=False)
+    thank_you_text = models.TextField(blank=False)
     date_created = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User, blank=False)
     active = models.BooleanField(default=False)
 
-    objects = QuestionnaireManager
+    objects = QuestionnaireManager()
 
     def __unicode__(self):
         return self.title
@@ -71,7 +71,7 @@ class AnswerSheet(models.Model):
     questionnaire = models.OneToOneField(Questionnaire, blank=False)
     user = models.OneToOneField(User, blank=False)
     date_created = models.DateTimeField(auto_now_add=True)
-    date_last_updated = models.DateTimeField(auto_now_update=True, blank=True)
+    date_last_updated = models.DateTimeField(auto_now=True, blank=True)
 
     def __unicode__(self):
         return "%s by %s" % (questionnaire.title, user.username)
