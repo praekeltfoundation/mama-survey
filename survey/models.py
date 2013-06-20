@@ -7,10 +7,9 @@ class QuestionnaireManager(models.Manager):
         questionnaire is available for a given user.
     """
 
-    def questionnaire_available_for_user(self, user):
+    def questionnaire_for_user(self, user):
         """ Determine if a questionnaire is available for a given user
         """
-        return True
 
 
 class Questionnaire(models.Model):
@@ -34,6 +33,7 @@ class Questionnaire(models.Model):
     def get_next_question_for_user(self, user):
         """ Retrieve the next unanswered question in the questionnaire
         """
+
 
 class MultiChoiceQuestion(models.Model):
     """ Defines a multiple choice type question on the questionnaire
@@ -83,10 +83,15 @@ class AnswerSheet(models.Model):
         """ Determine if a user has completed the questionnaire
         """
 
+    def calculate_score(self, user):
+        """ calculate the user's score.
+        """
+
+
 class MultiChoiceAnswer(models.Model):
     """ Store the answer option that the user selected
     """
-    answer_sheet = models.OneToOneField(AnswerSheet, blank=False)
+    answer_sheet = models.ForeignKey(AnswerSheet, blank=False)
     question = models.OneToOneField(MultiChoiceQuestion, blank=False)
     chosen_option = models.OneToOneField(MultiChoiceOption, blank=False)
 
