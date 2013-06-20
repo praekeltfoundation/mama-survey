@@ -23,12 +23,12 @@ Dependencies
 System libraries
 ****************
 
-None
+- None
 
 Python packages
 ***************
 
-None
+- None
 
 
 Usage
@@ -55,4 +55,3 @@ INSTALLED_APPS {
     'survey',
     ....
 }
-::
