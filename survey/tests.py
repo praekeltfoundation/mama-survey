@@ -1,4 +1,5 @@
 from django.utils import unittest
+from django.db.utils import IntegrityError
 from django.contrib.auth.models import User
 
 from survey.models import Questionnaire, MultiChoiceQuestion, \
@@ -180,3 +181,22 @@ class SurveyTestCase(unittest.TestCase):
                 question = question2,
                 chosen_option = option2)
         self.assertEqual(sheet.calculate_score(self.guinea_pig), 1)
+
+    def test_unique(self):
+        # check for integrity error violations
+        guinea_pig2 = User.objects.create(username='thepig2', 
+                                              password='dirtysecret2')
+        guinea_pig2.active = True
+
+        sheet1 = AnswerSheet.objects.create(
+                questionnaire=self.questionnaire1,
+                user=self.guinea_pig)
+        self.assertRaises(IntegrityError, 
+                AnswerSheet.objects.create,
+                questionnaire=self.questionnaire1,
+                user=self.guinea_pig)
+        sheet2 = AnswerSheet.objects.create(
+                questionnaire=self.questionnaire1,
+                user=guinea_pig2)
+        self.assertIsNotNone(sheet2)
+        self.assertNotEqual(sheet1, sheet2)

@@ -78,6 +78,7 @@ class AnswerSheet(models.Model):
 
     class Meta:
         ordering = ('user', 'date_created',)
+        unique_together = ('questionnaire', 'user',)
 
     def is_complete(self, user):
         """ Determine if a user has completed the questionnaire
