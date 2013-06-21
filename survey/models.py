@@ -46,7 +46,7 @@ class MultiChoiceQuestion(models.Model):
         return self.question_text
 
     class Meta:
-        ordering = ('question_order',)
+        ordering = ('questionnaire', 'question_order',)
 
     
 class MultiChoiceOption(models.Model):
@@ -68,13 +68,13 @@ class AnswerSheet(models.Model):
     """ Contains the answers provided by the user in response to the questions
         contained in the questionnaire.
     """
-    questionnaire = models.OneToOneField(Questionnaire, blank=False)
-    user = models.OneToOneField(User, blank=False)
+    questionnaire = models.ForeignKey(Questionnaire, blank=False)
+    user = models.ForeignKey(User, blank=False)
     date_created = models.DateTimeField(auto_now_add=True)
     date_last_updated = models.DateTimeField(auto_now=True, blank=True)
 
     def __unicode__(self):
-        return "%s by %s" % (questionnaire.title, user.username)
+        return "%s by %s" % (self.questionnaire.title, self.user.username)
 
     class Meta:
         ordering = ('user', 'date_created',)
@@ -92,8 +92,8 @@ class MultiChoiceAnswer(models.Model):
     """ Store the answer option that the user selected
     """
     answer_sheet = models.ForeignKey(AnswerSheet, blank=False)
-    question = models.OneToOneField(MultiChoiceQuestion, blank=False)
-    chosen_option = models.OneToOneField(MultiChoiceOption, blank=False)
+    question = models.ForeignKey(MultiChoiceQuestion, blank=False)
+    chosen_option = models.ForeignKey(MultiChoiceOption, blank=False)
 
     def __unicode__(self):
         return "%s: %s" % (self.question.question_text,
