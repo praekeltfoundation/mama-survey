@@ -65,8 +65,7 @@ class SurveyTestCase(unittest.TestCase):
 
         # Create an answer for question 1. No questions left, so questionnaire
         # is completed, and nothing more available.
-        MultiChoiceAnswer.objects.create(
-                answer_sheet = sheet,
+        sheet.multichoiceanswer_set.create(
                 question = self.question1,
                 chosen_option = self.option2)
         self.assertIsNone(
@@ -103,8 +102,7 @@ class SurveyTestCase(unittest.TestCase):
 
         # Create an answer for question 1. We should expect to get question2 as
         # the next question
-        MultiChoiceAnswer.objects.create(
-                answer_sheet = sheet,
+        sheet.multichoiceanswer_set.create(
                 question = self.question1,
                 chosen_option = self.option2)
         self.assertEqual(
@@ -113,8 +111,7 @@ class SurveyTestCase(unittest.TestCase):
 
         # Create an answer for question 2. We should expect to get no next
         # question
-        MultiChoiceAnswer.objects.create(
-                answer_sheet = sheet,
+        sheet.multichoiceanswer_set.create(
                 question = question2,
                 chosen_option = option1)
         self.assertIsNone(
@@ -141,15 +138,13 @@ class SurveyTestCase(unittest.TestCase):
         self.assertFalse(sheet.is_complete(self.guinea_pig))
 
         # Create an answer for question 1. Sheet should still be incomplete
-        MultiChoiceAnswer.objects.create(
-                answer_sheet = sheet,
+        sheet.multichoiceanswer_set.create(
                 question = self.question1,
                 chosen_option = self.option2)
         self.assertFalse(sheet.is_complete(self.guinea_pig))
 
         # Create an answer for question 2. Sheet should be complete
-        MultiChoiceAnswer.objects.create(
-                answer_sheet = sheet,
+        sheet.multichoiceanswer_set.create(
                 question = question2,
                 chosen_option = option1)
         self.assertTrue(sheet.is_complete(self.guinea_pig))
@@ -175,15 +170,13 @@ class SurveyTestCase(unittest.TestCase):
         self.assertEqual(sheet.calculate_score(self.guinea_pig), 0)
 
         # Create a correct answer for question1
-        MultiChoiceAnswer.objects.create(
-                answer_sheet = sheet,
+        sheet.multichoiceanswer_set.create(
                 question = self.question1,
                 chosen_option = self.option2)
         self.assertEqual(sheet.calculate_score(self.guinea_pig), 1)
 
         # Create an incorrect answer for question 2.
-        MultiChoiceAnswer.objects.create(
-                answer_sheet = sheet,
+        sheet.multichoiceanswer_set.create(
                 question = question2,
                 chosen_option = option2)
         self.assertEqual(sheet.calculate_score(self.guinea_pig), 1)
