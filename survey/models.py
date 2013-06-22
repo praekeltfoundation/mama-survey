@@ -10,6 +10,11 @@ class QuestionnaireManager(models.Manager):
     def questionnaire_for_user(self, user):
         """ Determine if a questionnaire is available for a given user
         """
+        qs = self.get_query_set().filter(active=True)
+        for itm in qs:
+            # look for a questionnaire with available questions
+            if not itm.is_complete(user):
+                return itm
 
 
 class Questionnaire(models.Model):
@@ -33,6 +38,31 @@ class Questionnaire(models.Model):
     def get_next_question_for_user(self, user):
         """ Retrieve the next unanswered question in the questionnaire
         """
+        try:
+            # get the matching answersheet for the user.
+            answersheet = self.answersheet_set.get(user=user)
+
+            # if the sheet has no answers yet, return the first question
+            if answersheet.multichoiceanswer_set.count() == 0:
+                return self.multichoicequestion_set.all()[0]
+            else:
+                # find and return the first question without an answer
+                for question in self.multichoicequestion_set.all():
+                    if answersheet.multichoiceanswer_set.filter(
+                                question=question).count() == 0:
+                        return question
+        except AnswerSheet.DoesNotExist:
+            # no answer sheet yet
+            return self.multichoicequestion_set.all()[0]
+    
+    def is_complete(self, user):
+        try:
+            return self.answersheet_set.filter(user=user)[0].is_complete()
+        except IndexError:
+            pass
+
+    def number_of_questions(self):
+        return self.multichoicequestion_set.count()
 
 
 class MultiChoiceQuestion(models.Model):
@@ -80,13 +110,26 @@ class AnswerSheet(models.Model):
         ordering = ('user', 'date_created',)
         unique_together = ('questionnaire', 'user',)
 
-    def is_complete(self, user):
+    def number_of_questions_answered(self):
+        """ return the number of answered questions for a user for this sheet
+        """
+        # return self.multichoiceanswer_set.filter(answer_sheet=self).count()
+        return self.multichoiceanswer_set.count()
+
+    def is_complete(self):
         """ Determine if a user has completed the questionnaire
         """
+        return (self.questionnaire.number_of_questions() == 
+                self.number_of_questions_answered())
 
-    def calculate_score(self, user):
+    def calculate_score(self):
         """ calculate the user's score.
         """
+        score = 0
+        for itm in self.multichoiceanswer_set.all():
+            if itm.chosen_option.is_correct_option:
+                score += 1
+        return score
 
 
 class MultiChoiceAnswer(models.Model):

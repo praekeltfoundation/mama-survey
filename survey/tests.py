@@ -44,6 +44,24 @@ class SurveyTestCase(unittest.TestCase):
         self.guinea_pig.delete()
         self.boss_man.delete()
 
+    def test_number_of_questions(self):
+        self.assertEqual(self.questionnaire1.number_of_questions(), 1)
+
+        # Add a question to questionnaire 1
+        question2 = self.questionnaire1.multichoicequestion_set.create(
+                    question_order = 1,
+                    question_text = 'Question 2')
+        option1 = question2.multichoiceoption_set.create(
+                    option_order = 0,
+                    option_text = 'Option 1',
+                    is_correct_option = True)
+        option2 = question2.multichoiceoption_set.create(
+                    option_order = 1,
+                    option_text = 'Option 2',
+                    is_correct_option = False)
+
+        self.assertEqual(self.questionnaire1.number_of_questions(), 2)
+
     def test_available_questionnaire_for_user(self):
         # An inactive qeustionnaire is not available
         self.assertIsNone(
@@ -136,19 +154,34 @@ class SurveyTestCase(unittest.TestCase):
         sheet = AnswerSheet.objects.create(
                 questionnaire = self.questionnaire1,
                 user=self.guinea_pig)
-        self.assertFalse(sheet.is_complete(self.guinea_pig))
+        self.assertFalse(sheet.is_complete())
+        self.assertFalse(self.questionnaire1.is_complete(self.guinea_pig))
 
         # Create an answer for question 1. Sheet should still be incomplete
         sheet.multichoiceanswer_set.create(
                 question = self.question1,
                 chosen_option = self.option2)
-        self.assertFalse(sheet.is_complete(self.guinea_pig))
+        self.assertFalse(sheet.is_complete())
+        self.assertFalse(self.questionnaire1.is_complete(self.guinea_pig))
+
+        # Check the number of questions answered
+        self.assertEqual(sheet.number_of_questions_answered(), 1)
 
         # Create an answer for question 2. Sheet should be complete
         sheet.multichoiceanswer_set.create(
                 question = question2,
                 chosen_option = option1)
-        self.assertTrue(sheet.is_complete(self.guinea_pig))
+        self.assertTrue(sheet.is_complete())
+        self.assertTrue(self.questionnaire1.is_complete(self.guinea_pig))
+
+        # The questionnaire must incomplete for another user
+        guinea_pig4 = User.objects.create(username='thepig4', 
+                                              password='dirtysecret4')
+        guinea_pig4.active = True
+        self.assertFalse(self.questionnaire1.is_complete(guinea_pig4))
+
+        # Check the number of questions answered
+        self.assertEqual(sheet.number_of_questions_answered(), 2)
 
     def test_score(self):
         # Add a question to questionnaire 1
@@ -168,25 +201,45 @@ class SurveyTestCase(unittest.TestCase):
         sheet = AnswerSheet.objects.create(
                 questionnaire = self.questionnaire1,
                 user=self.guinea_pig)
-        self.assertEqual(sheet.calculate_score(self.guinea_pig), 0)
+        self.assertEqual(sheet.calculate_score(), 0)
 
         # Create a correct answer for question1
         sheet.multichoiceanswer_set.create(
                 question = self.question1,
                 chosen_option = self.option2)
-        self.assertEqual(sheet.calculate_score(self.guinea_pig), 1)
+        self.assertEqual(sheet.calculate_score(), 1)
 
         # Create an incorrect answer for question 2.
         sheet.multichoiceanswer_set.create(
                 question = question2,
                 chosen_option = option2)
-        self.assertEqual(sheet.calculate_score(self.guinea_pig), 1)
+        self.assertEqual(sheet.calculate_score(), 1)
 
-    def test_unique(self):
-        # check for integrity error violations
+        # Create another sheet for a different user
         guinea_pig2 = User.objects.create(username='thepig2', 
                                               password='dirtysecret2')
         guinea_pig2.active = True
+        sheet2 = AnswerSheet.objects.create(
+                questionnaire=self.questionnaire1,
+                user=guinea_pig2)
+
+        # Create a correct answer for question1
+        sheet2.multichoiceanswer_set.create(
+                question = self.question1,
+                chosen_option = self.option2)
+        self.assertEqual(sheet2.calculate_score(), 1)
+
+        # Create an correct answer for question 2.
+        sheet2.multichoiceanswer_set.create(
+                question = question2,
+                chosen_option = option1)
+        self.assertEqual(sheet2.calculate_score(), 2)
+
+    def test_unique(self):
+        # check for integrity error violations
+        guinea_pig3 = User.objects.create(username='thepig3', 
+                                              password='dirtysecret3')
+        guinea_pig3.active = True
 
         sheet1 = AnswerSheet.objects.create(
                 questionnaire=self.questionnaire1,
@@ -197,6 +250,6 @@ class SurveyTestCase(unittest.TestCase):
                 user=self.guinea_pig)
         sheet2 = AnswerSheet.objects.create(
                 questionnaire=self.questionnaire1,
-                user=guinea_pig2)
+                user=guinea_pig3)
         self.assertIsNotNone(sheet2)
         self.assertNotEqual(sheet1, sheet2)
