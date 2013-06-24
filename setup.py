@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 setup(
     name='mama-survey',
     version='dev',
-    description='Simple Survey Django Application for askMAMA.mobi',
+    description='Simple Survey Django Application for askMAMA',
     long_description = open('README.rst', 'r').read() + open('AUTHORS.rst', 'r').read() + open('CHANGELOG.rst', 'r').read(),
     author='Praekelt Foundation',
     author_email='dev@praekelt.com',
@@ -13,6 +13,7 @@ setup(
     dependency_links = [
     ],
     install_requires = [
+        'jmbo==0.5.5',
     ],
     tests_require=[
         'django-setuptest',

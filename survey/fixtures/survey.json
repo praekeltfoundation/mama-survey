@@ -1,0 +1,190 @@
+[
+  {
+    "pk": 1,
+    "model": "survey.questionnaire",
+    "fields": {
+      "title": "MAMA Evaluation Questionnaire 1",
+      "created_by": 1,
+      "active": false,
+      "thank_you_text": "Thank you for participating in this survey. It will certainly assist us to better serve you with the knowledge you need. We hope you also learned something in the process.\r\n\r\nThe askMAMA team.",
+      "date_created": "2013-06-24T11:46:37.349",
+      "introduction_text": "Welcome to the askMAMA survey. We would like to measure how well we are succeeding in helping you to learn more about dealing with pregnancy and child care. To that end, we would like to ask you to complete this short survey to assist us, and test your own knowledge, in the process. Thank you in advance.\r\n\r\nIf you choose not to participate, we will not ask you ever again to complete a survey on this site. If you choose to do so later, we will remind you when you log into the site again."
+    }
+  },
+  {
+    "pk": 1,
+    "model": "survey.multichoicequestion",
+    "fields": {
+      "questionnaire": 1,
+      "question_text": "Is feeding your baby breast milk the best option for him/her?",
+      "question_order": 1
+    }
+  },
+  {
+    "pk": 2,
+    "model": "survey.multichoicequestion",
+    "fields": {
+      "questionnaire": 1,
+      "question_text": "If you are HIV positive and give birth for a baby you must:",
+      "question_order": 2
+    }
+  },
+  {
+    "pk": 3,
+    "model": "survey.multichoicequestion",
+    "fields": {
+      "questionnaire": 1,
+      "question_text": "A newborn needs at least how many hours of sleep a day?",
+      "question_order": 3
+    }
+  },
+  {
+    "pk": 4,
+    "model": "survey.multichoicequestion",
+    "fields": {
+      "questionnaire": 1,
+      "question_text": "When should you attend the clinic after you find out you are pregnant?",
+      "question_order": 4
+    }
+  },
+  {
+    "pk": 1,
+    "model": "survey.multichoiceoption",
+    "fields": {
+      "option_text": "Yes, your breast milk is best for your baby.",
+      "is_correct_option": true,
+      "option_order": 1,
+      "question": 1
+    }
+  },
+  {
+    "pk": 4,
+    "model": "survey.multichoiceoption",
+    "fields": {
+      "option_text": "Bring your baby to the clinic to be retested around 6 weeks after birth.",
+      "is_correct_option": true,
+      "option_order": 1,
+      "question": 2
+    }
+  },
+  {
+    "pk": 7,
+    "model": "survey.multichoiceoption",
+    "fields": {
+      "option_text": "16 hours",
+      "is_correct_option": true,
+      "option_order": 1,
+      "question": 3
+    }
+  },
+  {
+    "pk": 11,
+    "model": "survey.multichoiceoption",
+    "fields": {
+      "option_text": "As soon as possible.",
+      "is_correct_option": true,
+      "option_order": 1,
+      "question": 4
+    }
+  },
+  {
+    "pk": 2,
+    "model": "survey.multichoiceoption",
+    "fields": {
+      "option_text": "No, formula and water are just as good.",
+      "is_correct_option": false,
+      "option_order": 2,
+      "question": 1
+    }
+  },
+  {
+    "pk": 5,
+    "model": "survey.multichoiceoption",
+    "fields": {
+      "option_text": "Bring your baby to the clinic every day for the first two weeks after birth.",
+      "is_correct_option": false,
+      "option_order": 2,
+      "question": 2
+    }
+  },
+  {
+    "pk": 8,
+    "model": "survey.multichoiceoption",
+    "fields": {
+      "option_text": "24 hours",
+      "is_correct_option": false,
+      "option_order": 2,
+      "question": 3
+    }
+  },
+  {
+    "pk": 12,
+    "model": "survey.multichoiceoption",
+    "fields": {
+      "option_text": "1 month before delivery.",
+      "is_correct_option": false,
+      "option_order": 2,
+      "question": 4
+    }
+  },
+  {
+    "pk": 3,
+    "model": "survey.multichoiceoption",
+    "fields": {
+      "option_text": "It depends on the mother\u2019s HIV status.",
+      "is_correct_option": false,
+      "option_order": 3,
+      "question": 1
+    }
+  },
+  {
+    "pk": 6,
+    "model": "survey.multichoiceoption",
+    "fields": {
+      "option_text": "Only attend the clinic when you feel like it.",
+      "is_correct_option": false,
+      "option_order": 3,
+      "question": 2
+    }
+  },
+  {
+    "pk": 9,
+    "model": "survey.multichoiceoption",
+    "fields": {
+      "option_text": "8 hours",
+      "is_correct_option": false,
+      "option_order": 3,
+      "question": 3
+    }
+  },
+  {
+    "pk": 13,
+    "model": "survey.multichoiceoption",
+    "fields": {
+      "option_text": "1 month after I find out I am pregnant.",
+      "is_correct_option": false,
+      "option_order": 3,
+      "question": 4
+    }
+  },
+  {
+    "pk": 10,
+    "model": "survey.multichoiceoption",
+    "fields": {
+      "option_text": "4 hours",
+      "is_correct_option": false,
+      "option_order": 4,
+      "question": 3
+    }
+  },
+  {
+    "pk": 14,
+    "model": "survey.multichoiceoption",
+    "fields": {
+      "option_text": "When I have a day off work.",
+      "is_correct_option": false,
+      "option_order": 4,
+      "question": 4
+    }
+  }
+]
