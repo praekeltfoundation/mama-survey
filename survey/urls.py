@@ -2,7 +2,7 @@ from django.conf.urls.defaults import *
 from django.contrib.auth.decorators import login_required
 
 from survey.views import (CheckForQuestionnaireView, ChooseActionFormView,
-                            SurveyFormView)
+                            SurveyFormView, SurveyThankyouView)
 
 urlpatterns = patterns('',
     url(
@@ -19,5 +19,10 @@ urlpatterns = patterns('',
         r'^survey/(?P<survey_id>\d+)/',
         login_required(SurveyFormView.as_view()),
         name='survey_form'
+    ),
+    url(
+        r'^thank-you/(?P<survey_id>\d+)/',
+        login_required(SurveyThankyouView.as_view()),
+        name='thankyou_page'
     ),
 )

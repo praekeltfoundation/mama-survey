@@ -33,7 +33,7 @@ class Questionnaire(models.Model):
         return self.title
 
     class Meta:
-        ordering = ('-date_created',)
+        ordering = ('date_created',)
 
     def get_next_question_for_user(self, user):
         """ Retrieve the next unanswered question in the questionnaire
@@ -59,7 +59,7 @@ class Questionnaire(models.Model):
         try:
             return self.answersheet_set.filter(user=user)[0].is_complete()
         except IndexError:
-            pass
+            return False
 
     def number_of_questions(self):
         return self.multichoicequestion_set.count()

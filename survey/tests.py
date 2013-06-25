@@ -90,6 +90,26 @@ class SurveyTestCase(unittest.TestCase):
         self.assertIsNone(
                 Questionnaire.objects.questionnaire_for_user(self.guinea_pig))
 
+        # create a new questionnaire
+        questionnaire2 = Questionnaire.objects.create(
+                    title = 'MAMA Questionnaire 2',
+                    introduction_text = 'Intro text 2',
+                    thank_you_text = 'Thank you twice',
+                    created_by = self.boss_man,
+                    active = True)
+        self.assertEqual(
+                Questionnaire.objects.questionnaire_for_user(self.guinea_pig),
+                questionnaire2)
+
+        # create a new user
+        guinea_pig3 = User.objects.create(username='thepig3', 
+                                              password='dirtysecret3')
+        guinea_pig3.active = True
+        self.assertEqual(
+                Questionnaire.objects.questionnaire_for_user(guinea_pig3),
+                self.questionnaire1)
+
+
     def test_get_next_question_for_user(self):
         # Add a question to questionnaire 1
         question2 = self.questionnaire1.multichoicequestion_set.create(
@@ -237,7 +257,7 @@ class SurveyTestCase(unittest.TestCase):
 
     def test_unique(self):
         # check for integrity error violations
-        guinea_pig3 = User.objects.create(username='thepig3', 
+        guinea_pig3, created = User.objects.get_or_create(username='thepig3', 
                                               password='dirtysecret3')
         guinea_pig3.active = True
 

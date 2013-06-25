@@ -23,3 +23,14 @@ class SurveyChoiceForm(forms.Form):
             initial='now')
 
     as_div = as_div
+
+
+class SurveyQuestionForm(forms.Form):
+    """ Display the options and capture the answer for one question in the
+        survey.
+    """
+    survey_id = forms.Field(widget=forms.HiddenInput)
+    question_id = forms.Field(widget=forms.HiddenInput)
+    question = forms.ChoiceField(widget=RadioSelect)
+
+    as_div = as_div
