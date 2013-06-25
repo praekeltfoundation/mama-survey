@@ -3,12 +3,24 @@
     "pk": 1,
     "model": "survey.questionnaire",
     "fields": {
-      "title": "MAMA Evaluation Questionnaire 1",
+      "title": "askMAMA Survey",
       "created_by": 1,
-      "active": false,
-      "thank_you_text": "Thank you for participating in this survey. It will certainly assist us to better serve you with the knowledge you need. We hope you also learned something in the process.\r\n\r\nThe askMAMA team.",
+      "active": true,
+      "thank_you_text": "<p>Thank you for participating in this survey. It will certainly assist us to better serve you with the knowledge you need. We hope you also learned something in the process</p>\r\n\r\n<p>The askMAMA team.</p>",
       "date_created": "2013-06-24T11:46:37.349",
-      "introduction_text": "Welcome to the askMAMA survey. We would like to measure how well we are succeeding in helping you to learn more about dealing with pregnancy and child care. To that end, we would like to ask you to complete this short survey to assist us, and test your own knowledge, in the process. Thank you in advance.\r\n\r\nIf you choose not to participate, we will not ask you ever again to complete a survey on this site. If you choose to do so later, we will remind you when you log into the site again."
+      "introduction_text": "<p>Welcome to the askMAMA survey. We would like to measure how well we are succeeding in helping you to learn more about dealing with pregnancy and child care. To that end, we would like to ask you to complete this short survey to assist us, and test your own knowledge, in the process. Thank you in advance.</p>\r\n\r\n<p>If you choose not to participate, we will not ask you ever again to complete a survey on this site. If you choose to do so later, we will remind you when you log into the site again.</p>"
+    }
+  },
+  {
+    "pk": 2,
+    "model": "survey.questionnaire",
+    "fields": {
+      "title": "askMAMA Follow-up Survey",
+      "created_by": 1,
+      "active": true,
+      "thank_you_text": "Thank you for participating! We really appreciate you taking the time, and wish you all the best caring for your newborn. Remember to check the site regularly for new information and updates.",
+      "date_created": "2013-06-25T15:44:38.959",
+      "introduction_text": "We would like to find out if all the information we have been sharing with you on the site has been of value to you. Please answer some more questions to help us guage that."
     }
   },
   {
@@ -44,6 +56,42 @@
     "fields": {
       "questionnaire": 1,
       "question_text": "When should you attend the clinic after you find out you are pregnant?",
+      "question_order": 4
+    }
+  },
+  {
+    "pk": 5,
+    "model": "survey.multichoicequestion",
+    "fields": {
+      "questionnaire": 2,
+      "question_text": "Is breast milk the best food for your newborn?",
+      "question_order": 1
+    }
+  },
+  {
+    "pk": 6,
+    "model": "survey.multichoicequestion",
+    "fields": {
+      "questionnaire": 2,
+      "question_text": "Newborns of an HIV positive mother must:",
+      "question_order": 2
+    }
+  },
+  {
+    "pk": 7,
+    "model": "survey.multichoicequestion",
+    "fields": {
+      "questionnaire": 2,
+      "question_text": "How much time should a baby sleep every day.",
+      "question_order": 3
+    }
+  },
+  {
+    "pk": 8,
+    "model": "survey.multichoicequestion",
+    "fields": {
+      "questionnaire": 2,
+      "question_text": "When you find out you are pregnant, how soon should you visit the clinic?",
       "question_order": 4
     }
   },
@@ -88,6 +136,46 @@
     }
   },
   {
+    "pk": 16,
+    "model": "survey.multichoiceoption",
+    "fields": {
+      "option_text": "Water and formula works well too.",
+      "is_correct_option": false,
+      "option_order": 1,
+      "question": 5
+    }
+  },
+  {
+    "pk": 20,
+    "model": "survey.multichoiceoption",
+    "fields": {
+      "option_text": "Go to the clinin when the mother has time.",
+      "is_correct_option": false,
+      "option_order": 1,
+      "question": 6
+    }
+  },
+  {
+    "pk": 22,
+    "model": "survey.multichoiceoption",
+    "fields": {
+      "option_text": "24 hours.",
+      "is_correct_option": false,
+      "option_order": 1,
+      "question": 7
+    }
+  },
+  {
+    "pk": 26,
+    "model": "survey.multichoiceoption",
+    "fields": {
+      "option_text": "A month before the birth of the child.",
+      "is_correct_option": false,
+      "option_order": 1,
+      "question": 8
+    }
+  },
+  {
     "pk": 2,
     "model": "survey.multichoiceoption",
     "fields": {
@@ -125,6 +213,46 @@
       "is_correct_option": false,
       "option_order": 2,
       "question": 4
+    }
+  },
+  {
+    "pk": 17,
+    "model": "survey.multichoiceoption",
+    "fields": {
+      "option_text": "Not if the mother is HIV positive.",
+      "is_correct_option": false,
+      "option_order": 2,
+      "question": 5
+    }
+  },
+  {
+    "pk": 19,
+    "model": "survey.multichoiceoption",
+    "fields": {
+      "option_text": "Go to the clinic every day for the first 14 days.",
+      "is_correct_option": false,
+      "option_order": 2,
+      "question": 6
+    }
+  },
+  {
+    "pk": 23,
+    "model": "survey.multichoiceoption",
+    "fields": {
+      "option_text": "4 hours.",
+      "is_correct_option": false,
+      "option_order": 2,
+      "question": 7
+    }
+  },
+  {
+    "pk": 25,
+    "model": "survey.multichoiceoption",
+    "fields": {
+      "option_text": "As soon as you can.",
+      "is_correct_option": true,
+      "option_order": 2,
+      "question": 8
     }
   },
   {
@@ -168,6 +296,46 @@
     }
   },
   {
+    "pk": 15,
+    "model": "survey.multichoiceoption",
+    "fields": {
+      "option_text": "Its the best by far",
+      "is_correct_option": true,
+      "option_order": 3,
+      "question": 5
+    }
+  },
+  {
+    "pk": 18,
+    "model": "survey.multichoiceoption",
+    "fields": {
+      "option_text": "Be re-tested at the clinic after 6 weeks.",
+      "is_correct_option": true,
+      "option_order": 3,
+      "question": 6
+    }
+  },
+  {
+    "pk": 21,
+    "model": "survey.multichoiceoption",
+    "fields": {
+      "option_text": "16 hours.",
+      "is_correct_option": true,
+      "option_order": 3,
+      "question": 7
+    }
+  },
+  {
+    "pk": 27,
+    "model": "survey.multichoiceoption",
+    "fields": {
+      "option_text": "When I can take some leave.",
+      "is_correct_option": false,
+      "option_order": 3,
+      "question": 8
+    }
+  },
+  {
     "pk": 10,
     "model": "survey.multichoiceoption",
     "fields": {
@@ -184,6 +352,200 @@
       "option_text": "When I have a day off work.",
       "is_correct_option": false,
       "option_order": 4,
+      "question": 4
+    }
+  },
+  {
+    "pk": 24,
+    "model": "survey.multichoiceoption",
+    "fields": {
+      "option_text": "8 hours.",
+      "is_correct_option": false,
+      "option_order": 4,
+      "question": 7
+    }
+  },
+  {
+    "pk": 1,
+    "model": "survey.answersheet",
+    "fields": {
+      "date_last_updated": "2013-06-25T15:00:00.155",
+      "date_created": "2013-06-25T15:00:00.155",
+      "questionnaire": 1,
+      "user": 1
+    }
+  },
+  {
+    "pk": 2,
+    "model": "survey.answersheet",
+    "fields": {
+      "date_last_updated": "2013-06-25T15:34:05.289",
+      "date_created": "2013-06-25T15:34:05.289",
+      "questionnaire": 1,
+      "user": 4
+    }
+  },
+  {
+    "pk": 3,
+    "model": "survey.answersheet",
+    "fields": {
+      "date_last_updated": "2013-06-25T15:56:08.179",
+      "date_created": "2013-06-25T15:56:08.179",
+      "questionnaire": 2,
+      "user": 4
+    }
+  },
+  {
+    "pk": 4,
+    "model": "survey.answersheet",
+    "fields": {
+      "date_last_updated": "2013-06-25T16:11:31.323",
+      "date_created": "2013-06-25T16:11:31.323",
+      "questionnaire": 1,
+      "user": 5
+    }
+  },
+  {
+    "pk": 1,
+    "model": "survey.multichoiceanswer",
+    "fields": {
+      "answer_sheet": 1,
+      "chosen_option": 3,
+      "question": 1
+    }
+  },
+  {
+    "pk": 2,
+    "model": "survey.multichoiceanswer",
+    "fields": {
+      "answer_sheet": 1,
+      "chosen_option": 5,
+      "question": 2
+    }
+  },
+  {
+    "pk": 3,
+    "model": "survey.multichoiceanswer",
+    "fields": {
+      "answer_sheet": 1,
+      "chosen_option": 9,
+      "question": 3
+    }
+  },
+  {
+    "pk": 4,
+    "model": "survey.multichoiceanswer",
+    "fields": {
+      "answer_sheet": 1,
+      "chosen_option": 12,
+      "question": 4
+    }
+  },
+  {
+    "pk": 5,
+    "model": "survey.multichoiceanswer",
+    "fields": {
+      "answer_sheet": 2,
+      "chosen_option": 1,
+      "question": 1
+    }
+  },
+  {
+    "pk": 6,
+    "model": "survey.multichoiceanswer",
+    "fields": {
+      "answer_sheet": 2,
+      "chosen_option": 4,
+      "question": 2
+    }
+  },
+  {
+    "pk": 7,
+    "model": "survey.multichoiceanswer",
+    "fields": {
+      "answer_sheet": 2,
+      "chosen_option": 7,
+      "question": 3
+    }
+  },
+  {
+    "pk": 8,
+    "model": "survey.multichoiceanswer",
+    "fields": {
+      "answer_sheet": 2,
+      "chosen_option": 11,
+      "question": 4
+    }
+  },
+  {
+    "pk": 9,
+    "model": "survey.multichoiceanswer",
+    "fields": {
+      "answer_sheet": 3,
+      "chosen_option": 17,
+      "question": 5
+    }
+  },
+  {
+    "pk": 10,
+    "model": "survey.multichoiceanswer",
+    "fields": {
+      "answer_sheet": 3,
+      "chosen_option": 18,
+      "question": 6
+    }
+  },
+  {
+    "pk": 11,
+    "model": "survey.multichoiceanswer",
+    "fields": {
+      "answer_sheet": 3,
+      "chosen_option": 21,
+      "question": 7
+    }
+  },
+  {
+    "pk": 12,
+    "model": "survey.multichoiceanswer",
+    "fields": {
+      "answer_sheet": 3,
+      "chosen_option": 25,
+      "question": 8
+    }
+  },
+  {
+    "pk": 13,
+    "model": "survey.multichoiceanswer",
+    "fields": {
+      "answer_sheet": 4,
+      "chosen_option": 1,
+      "question": 1
+    }
+  },
+  {
+    "pk": 14,
+    "model": "survey.multichoiceanswer",
+    "fields": {
+      "answer_sheet": 4,
+      "chosen_option": 4,
+      "question": 2
+    }
+  },
+  {
+    "pk": 15,
+    "model": "survey.multichoiceanswer",
+    "fields": {
+      "answer_sheet": 4,
+      "chosen_option": 7,
+      "question": 3
+    }
+  },
+  {
+    "pk": 16,
+    "model": "survey.multichoiceanswer",
+    "fields": {
+      "answer_sheet": 4,
+      "chosen_option": 11,
       "question": 4
     }
   }
