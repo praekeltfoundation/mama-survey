@@ -2,6 +2,7 @@ from django.utils import unittest
 from django.db.utils import IntegrityError
 from django.contrib.auth.models import User
 
+from survey import constants
 from survey.models import Questionnaire, MultiChoiceQuestion, \
                           MultiChoiceOption, AnswerSheet, MultiChoiceAnswer
 
@@ -174,15 +175,17 @@ class SurveyTestCase(unittest.TestCase):
         sheet = AnswerSheet.objects.create(
                 questionnaire = self.questionnaire1,
                 user=self.guinea_pig)
-        self.assertFalse(sheet.is_complete())
-        self.assertFalse(self.questionnaire1.is_complete(self.guinea_pig))
+        self.assertEqual(sheet.get_status(), constants.QUESTIONNAIRE_PENDING)
+        self.assertEqual(self.questionnaire1.get_status(self.guinea_pig),
+                         constants.QUESTIONNAIRE_PENDING)
 
         # Create an answer for question 1. Sheet should still be incomplete
         sheet.multichoiceanswer_set.create(
                 question = self.question1,
                 chosen_option = self.option2)
-        self.assertFalse(sheet.is_complete())
-        self.assertFalse(self.questionnaire1.is_complete(self.guinea_pig))
+        self.assertEqual(sheet.get_status(), constants.QUESTIONNAIRE_INCOMPLETE)
+        self.assertEqual(self.questionnaire1.get_status(self.guinea_pig),
+                         constants.QUESTIONNAIRE_INCOMPLETE)
 
         # Check the number of questions answered
         self.assertEqual(sheet.number_of_questions_answered(), 1)
@@ -191,14 +194,16 @@ class SurveyTestCase(unittest.TestCase):
         sheet.multichoiceanswer_set.create(
                 question = question2,
                 chosen_option = option1)
-        self.assertTrue(sheet.is_complete())
-        self.assertTrue(self.questionnaire1.is_complete(self.guinea_pig))
+        self.assertEqual(sheet.get_status(), constants.QUESTIONNAIRE_COMPLETED)
+        self.assertEqual(self.questionnaire1.get_status(self.guinea_pig),
+                         constants.QUESTIONNAIRE_COMPLETED)
 
         # The questionnaire must incomplete for another user
         guinea_pig4 = User.objects.create(username='thepig4', 
                                               password='dirtysecret4')
         guinea_pig4.active = True
-        self.assertFalse(self.questionnaire1.is_complete(guinea_pig4))
+        self.assertEqual(self.questionnaire1.get_status(guinea_pig4),
+                         constants.QUESTIONNAIRE_PENDING)
 
         # Check the number of questions answered
         self.assertEqual(sheet.number_of_questions_answered(), 2)

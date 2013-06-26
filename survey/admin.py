@@ -1,7 +1,8 @@
 from django.contrib import admin
 
-from survey.models import Questionnaire, MultiChoiceQuestion, MultiChoiceOption
-from survey.models import AnswerSheet, MultiChoiceAnswer
+from survey.models import (Questionnaire, MultiChoiceQuestion,
+                           MultiChoiceOption, QuestionnaireHolodeckKeys, 
+                           AnswerSheet, MultiChoiceAnswer)
 
 
 class MultiChoiceOptionAdmin(admin.TabularInline):
@@ -33,7 +34,13 @@ class AnswerSheetAdmin(admin.ModelAdmin):
     date_hierarchy = 'date_created'
     search_fields = ('questionnaire', 'user',)
     read_only_fields = ('date_created',)
-    raw_id_fields = ('user',) 
+    raw_id_fields = ('questionnaire', 'user',) 
     inlines = (MultiChoiceAnswerAdmin,)
 
 admin.site.register(AnswerSheet, AnswerSheetAdmin)
+
+class QuestionnaireHolodeckKeysAdmin(admin.ModelAdmin):
+    list_display = ('questionnaire', 'metric', 'holodeck_key',)
+    raw_id_fields = ('questionnaire',) 
+
+admin.site.register(QuestionnaireHolodeckKeys, QuestionnaireHolodeckKeysAdmin)

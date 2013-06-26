@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+from survey import constants
+
 
 class QuestionnaireManager(models.Manager):
     """ Model manager for questionnaire models. Used mainly to determine if a 
@@ -13,7 +15,7 @@ class QuestionnaireManager(models.Manager):
         qs = self.get_query_set().filter(active=True)
         for itm in qs:
             # look for a questionnaire with available questions
-            if not itm.is_complete(user):
+            if itm.get_status(user) != constants.QUESTIONNAIRE_COMPLETED:
                 return itm
 
 
@@ -55,14 +57,32 @@ class Questionnaire(models.Model):
             # no answer sheet yet
             return self.multichoicequestion_set.all()[0]
     
-    def is_complete(self, user):
-        try:
-            return self.answersheet_set.filter(user=user)[0].is_complete()
-        except IndexError:
-            return False
+    def get_status(self, user):
+        qs = self.answersheet_set.filter(user=user)
+        if qs.count() == 0:
+            return constants.QUESTIONNAIRE_PENDING
+        else:
+            return qs[0].get_status()
+        return constants.QUESTIONNAIRE_PENDING
 
     def number_of_questions(self):
         return self.multichoicequestion_set.count()
+
+
+class QuestionnaireHolodeckKeys(models.Model):
+    """ Set up the holodeck keys for the metrics being tracked.
+    """
+    questionnaire = models.ForeignKey(Questionnaire, blank=False)
+    metric = models.PositiveSmallIntegerField(
+                                choices=constants.QUESTIONNAIRE_METRICS,
+                                blank=False)
+    holodeck_key = models.CharField(max_length=100, blank=False)
+
+    def __unicode__(self):
+        return self.holodeck_key
+
+    class Meta:
+        ordering = ('questionnaire', 'metric',)
 
 
 class MultiChoiceQuestion(models.Model):
@@ -116,11 +136,31 @@ class AnswerSheet(models.Model):
         # return self.multichoiceanswer_set.filter(answer_sheet=self).count()
         return self.multichoiceanswer_set.count()
 
-    def is_complete(self):
-        """ Determine if a user has completed the questionnaire
+    def get_status(self):
+        """ Determine the status of the user's participation in the
+            questionnaire.
         """
-        return (self.questionnaire.number_of_questions() == 
-                self.number_of_questions_answered())
+        number_of_questions = self.questionnaire.number_of_questions()
+        number_of_questions_answered = self.number_of_questions_answered()
+
+        # If an answersheet exists, but no answers have been recorded, the
+        # status is pending.
+        if number_of_questions_answered == 0:
+            return constants.QUESTIONNAIRE_PENDING
+
+        # If an answersheet exists, with less answers than questions, the
+        # status is incomplete.
+        if (number_of_questions_answered > 0) and \
+                    (number_of_questions_answered < number_of_questions):
+            return constants.QUESTIONNAIRE_INCOMPLETE
+
+        # if the number of answers matches the number of questions, the status
+        # is complete.
+        if number_of_questions_answered == number_of_questions:
+            return constants.QUESTIONNAIRE_COMPLETED
+
+        # default status is pending
+        return constants.QUESTIONNAIRE_PENDING
 
     def calculate_score(self):
         """ calculate the user's score.
