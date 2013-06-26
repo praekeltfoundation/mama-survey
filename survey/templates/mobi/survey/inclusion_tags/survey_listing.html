@@ -1,0 +1,16 @@
+{% if user.is_authenticated %}
+  {% if survey %}
+    <div class="h1">askMAMA Survey</div>
+    <div class="content-inner">
+      <div class="items">
+        <div class="item no-pic">
+          <div class="meta">
+            Please consider participating in the latest 
+            <a href="{% url survey:survey_action survey.id %}">survey</a> to
+            test your own knowledge of caring for yourself and your newborn.
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+{% endif %}
