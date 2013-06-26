@@ -90,6 +90,11 @@ class SurveyFormView(FormView):
                             survey_id=survey_id))
 
     def post(self, request, *args, **kwargs):
+
+        # check if the user pressed the 'Exit' button.
+        if request.POST.get('submit') == 'Exit':
+            return  HttpResponseRedirect(reverse('survey:exit_page'))
+
         form_class = self.get_form_class()
         form = self.get_form(form_class)
 
@@ -161,3 +166,9 @@ class SurveyThankyouView(TemplateView):
         return {
             'params': kwargs
         }
+
+
+class SurveyExitView(TemplateView):
+    """ Display a page if the user pressed 'Exit' on any of the question pages.
+    """
+    template_name = 'survey/survey_exit.html'
