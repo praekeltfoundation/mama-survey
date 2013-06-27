@@ -14,6 +14,9 @@ setup(
     ],
     install_requires = [
         'jmbo==0.5.5',
+        'django-snippetscream',
+        'south',
+        'photon'
     ],
     tests_require=[
         'django-setuptest',
