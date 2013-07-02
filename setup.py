@@ -13,13 +13,13 @@ setup(
     dependency_links = [
     ],
     install_requires = [
-        'django>=1.4,<1.5',
-        'django-snippetscream',
-        'south',
-        'photon'
+        'django==1.4.5',
+        'django-snippetscream==0.0.7',
+        'south==0.8.1',
+        'photon==0.0.5'
     ],
     tests_require=[
-        'django-setuptest',
+        'django-setuptest==0.1.4',
     ],
     test_suite="setuptest.setuptest.SetupTestSuite",
     include_package_data=True,
