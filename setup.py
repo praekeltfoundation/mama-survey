@@ -13,7 +13,6 @@ setup(
     dependency_links = [
     ],
     install_requires = [
-        'jmbo==0.5.5',
         'django-snippetscream',
         'south',
         'photon'
