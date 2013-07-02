@@ -8,10 +8,9 @@ from survey.forms import SurveyChoiceForm, SurveyQuestionForm
 
 
 class CheckForQuestionnaireView(RedirectView):
-    """ Invoke this view to automatically get the survey application to check if
-        new questionnaires are available for the logged-in user. If so, redirect
-        them to the questionnaire page, else the home page.
-        
+    """ Invoke this view to automatically get the survey application to check
+    if new questionnaires are available for the logged-in user. If so, redirect
+    them to the questionnaire page, else the home page.
     """
     url = '/'
 
@@ -21,7 +20,8 @@ class CheckForQuestionnaireView(RedirectView):
         if questionnaire:
             return reverse('survey:survey_action', args=(questionnaire.pk,))
 
-        return super(CheckForQuestionnaireView,self).get_redirect_url(**kwargs)
+        return super(CheckForQuestionnaireView,
+                     self).get_redirect_url(**kwargs)
 
 
 class ChooseActionFormView(FormView):
@@ -29,16 +29,16 @@ class ChooseActionFormView(FormView):
         applicable questionnaire.
     """
     template_name = "survey/survey_choice.html"
-    form_class = SurveyChoiceForm 
+    form_class = SurveyChoiceForm
 
     def get(self, request, *args, **kwargs):
-        survey_id=kwargs.get('survey_id', None)
+        survey_id = kwargs.get('survey_id', None)
         form_class = self.get_form_class()
         form = self.get_form(form_class)
         form.fields['survey_id'].initial = survey_id
         return self.render_to_response(self.get_context_data(
-                            form=form, 
-                            survey_id=survey_id))
+            form=form,
+            survey_id=survey_id))
 
     def get_context_data(self, **kwargs):
         survey_id = kwargs.get('survey_id', None)
@@ -75,7 +75,7 @@ class SurveyFormView(FormView):
         next_question = survey.get_next_question_for_user(user)
         if next_question is None:
             return HttpResponseRedirect(reverse('survey:thankyou_page',
-                                            args=(survey_id,)))
+                                                args=(survey_id,)))
 
         # create the form
         form_class = self.get_form_class()
@@ -86,14 +86,14 @@ class SurveyFormView(FormView):
 
         # display the form
         return self.render_to_response(self.get_context_data(
-                            form=form, 
-                            survey_id=survey_id))
+            form=form,
+            survey_id=survey_id))
 
     def post(self, request, *args, **kwargs):
 
         # check if the user pressed the 'Exit' button.
         if request.POST.get('submit') == 'Exit':
-            return  HttpResponseRedirect(reverse('survey:exit_page'))
+            return HttpResponseRedirect(reverse('survey:exit_page'))
 
         form_class = self.get_form_class()
         form = self.get_form(form_class)
@@ -119,23 +119,25 @@ class SurveyFormView(FormView):
         # set the question id and question field attributes on the form
         form.fields['question_id'].initial = the_question.pk
         form.fields['question'].label = the_question.question_text
-        form.fields['question'].choices = [(itm.pk, itm.option_text,) for itm in
-                                    the_question.multichoiceoption_set.all()]
+        form.fields['question'].choices = [
+            (itm.pk, itm.option_text,)
+            for itm in the_question.multichoiceoption_set.all()]
         return form
 
     def form_invalid(self, form):
         survey_id = form.data['survey_id']
         return self.render_to_response(self.get_context_data(
-                        form=form, 
-                        survey_id=survey_id))
+            form=form,
+            survey_id=survey_id))
 
     def form_valid(self, form):
         survey_id = form.cleaned_data['survey_id']
         user = self.request.user
         survey = Questionnaire.objects.get(pk=survey_id)
 
-        sheet, created = AnswerSheet.objects.get_or_create(questionnaire=survey,
-                                                           user=user)
+        sheet, created = AnswerSheet.objects.get_or_create(
+            questionnaire=survey,
+            user=user)
 
         # retrieve the question and answer values
         question_id = form.cleaned_data['question_id']
@@ -148,7 +150,7 @@ class SurveyFormView(FormView):
                                            chosen_option=answer)
 
         # redirect to the next question
-        return  HttpResponseRedirect(self.get_success_url(survey_id))
+        return HttpResponseRedirect(self.get_success_url(survey_id))
 
     def get_success_url(self, survey_id):
         return reverse('survey:survey_form', args=(survey_id,))

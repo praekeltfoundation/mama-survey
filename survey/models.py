@@ -5,7 +5,7 @@ from survey import constants
 
 
 class QuestionnaireManager(models.Manager):
-    """ Model manager for questionnaire models. Used mainly to determine if a 
+    """ Model manager for questionnaire models. Used mainly to determine if a
         questionnaire is available for a given user.
     """
 
@@ -45,21 +45,21 @@ class Questionnaire(models.Model):
             answersheet = self.answersheet_set.get(user=user)
 
             # if the sheet has no answers yet, return the first question
-            if answersheet.multichoiceanswer_set.count() == 0:
+            if not answersheet.multichoiceanswer_set.exists():
                 return self.multichoicequestion_set.all()[0]
             else:
                 # find and return the first question without an answer
                 for question in self.multichoicequestion_set.all():
-                    if answersheet.multichoiceanswer_set.filter(
-                                question=question).count() == 0:
+                    if not answersheet.multichoiceanswer_set.filter(
+                            question=question).exists():
                         return question
         except AnswerSheet.DoesNotExist:
             # no answer sheet yet
             return self.multichoicequestion_set.all()[0]
-    
+
     def get_status(self, user):
         qs = self.answersheet_set.filter(user=user)
-        if qs.count() == 0:
+        if not qs.exists():
             return constants.QUESTIONNAIRE_PENDING
         else:
             return qs[0].get_status()
@@ -74,8 +74,8 @@ class QuestionnaireHolodeckKeys(models.Model):
     """
     questionnaire = models.ForeignKey(Questionnaire, blank=False)
     metric = models.PositiveSmallIntegerField(
-                                choices=constants.QUESTIONNAIRE_METRICS,
-                                blank=False)
+        choices=constants.QUESTIONNAIRE_METRICS,
+        blank=False)
     holodeck_key = models.CharField(max_length=100, blank=False)
 
     def __unicode__(self):
@@ -98,7 +98,7 @@ class MultiChoiceQuestion(models.Model):
     class Meta:
         ordering = ('questionnaire', 'question_order',)
 
-    
+
 class MultiChoiceOption(models.Model):
     """ Defines a selectable multiple choice answer option
     """
@@ -151,7 +151,7 @@ class AnswerSheet(models.Model):
         # If an answersheet exists, with less answers than questions, the
         # status is incomplete.
         if (number_of_questions_answered > 0) and \
-                    (number_of_questions_answered < number_of_questions):
+                (number_of_questions_answered < number_of_questions):
             return constants.QUESTIONNAIRE_INCOMPLETE
 
         # if the number of answers matches the number of questions, the status

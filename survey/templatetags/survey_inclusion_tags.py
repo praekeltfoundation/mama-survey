@@ -7,6 +7,7 @@ from survey.models import Questionnaire
 
 register = template.Library()
 
+
 @register.inclusion_tag('survey/inclusion_tags/survey_listing.html',
                         takes_context=True)
 def show_survey(context):
@@ -18,4 +19,3 @@ def show_survey(context):
             'survey': survey
         })
     return context
-

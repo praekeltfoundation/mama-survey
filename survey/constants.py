@@ -5,10 +5,10 @@ METRIC_QUESTIONNAIRE_PENDING = 3
 METRIC_QUESTIONNAIRE_REJECTED = 4
 
 QUESTIONNAIRE_METRICS = (
-        (METRIC_QUESTIONNAIRE_COMPLETED, 'Completed Questionnaires'),
-        (METRIC_QUESTIONNAIRE_INCOMPLETE, 'Incomplete Questionnaires'),
-        (METRIC_QUESTIONNAIRE_PENDING, 'Pending Questionnaires'),
-        (METRIC_QUESTIONNAIRE_REJECTED, 'Rejected Questionnaires'),
+    (METRIC_QUESTIONNAIRE_COMPLETED, 'Completed Questionnaires'),
+    (METRIC_QUESTIONNAIRE_INCOMPLETE, 'Incomplete Questionnaires'),
+    (METRIC_QUESTIONNAIRE_PENDING, 'Pending Questionnaires'),
+    (METRIC_QUESTIONNAIRE_REJECTED, 'Rejected Questionnaires'),
 )
 
 

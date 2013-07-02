@@ -4,7 +4,8 @@ from django.contrib.auth.decorators import login_required
 from survey.views import (CheckForQuestionnaireView, ChooseActionFormView,
                           SurveyFormView, SurveyThankyouView, SurveyExitView)
 
-urlpatterns = patterns('',
+urlpatterns = patterns(
+    '',
     url(
         r'^check-for-survey/$',
         login_required(CheckForQuestionnaireView.as_view()),

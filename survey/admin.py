@@ -9,19 +9,21 @@ from django.http import HttpResponse
 
 from survey import constants
 from survey.models import (Questionnaire, MultiChoiceQuestion,
-                           MultiChoiceOption, QuestionnaireHolodeckKeys, 
+                           MultiChoiceOption, QuestionnaireHolodeckKeys,
                            AnswerSheet, MultiChoiceAnswer)
 
 
 class MultiChoiceOptionAdmin(admin.TabularInline):
     model = MultiChoiceOption
 
+
 class MultiChoiceQuestionAdmin(admin.ModelAdmin):
     list_display = ('questionnaire', 'question_order', 'question_text',)
-    raw_id_fields = ('questionnaire',) 
+    raw_id_fields = ('questionnaire',)
     inlines = (MultiChoiceOptionAdmin,)
 
 admin.site.register(MultiChoiceQuestion, MultiChoiceQuestionAdmin)
+
 
 class QuestionnaireAdmin(admin.ModelAdmin):
     list_display = ('title', 'created_by', 'date_created', 'active',)
@@ -29,7 +31,7 @@ class QuestionnaireAdmin(admin.ModelAdmin):
     search_fields = ('title', 'created_by',)
     list_filter = ('active',)
     read_only_fields = ('date_created',)
-    raw_id_fields = ('created_by',) 
+    raw_id_fields = ('created_by',)
 
 admin.site.register(Questionnaire, QuestionnaireAdmin)
 
@@ -38,12 +40,13 @@ class MultiChoiceAnswerAdmin(admin.TabularInline):
     model = MultiChoiceAnswer
     raw_id_fields = ('answer_sheet',)
 
+
 class AnswerSheetAdmin(admin.ModelAdmin):
     list_display = ('questionnaire', 'user', 'date_created',)
     date_hierarchy = 'date_created'
     search_fields = ('questionnaire', 'user',)
     read_only_fields = ('date_created',)
-    raw_id_fields = ('questionnaire', 'user',) 
+    raw_id_fields = ('questionnaire', 'user',)
     inlines = (MultiChoiceAnswerAdmin,)
 
     def get_urls(self):
@@ -51,13 +54,12 @@ class AnswerSheetAdmin(admin.ModelAdmin):
             export the submitted sheets as a CSV file
         """
         urls = super(AnswerSheetAdmin, self).get_urls()
-        admin_urls = patterns('', 
-            url( 
-                r'^csv_export/$', 
-                self.admin_site.admin_view(self.csv_export),
-                name='survey_answersheet_csv_export'
-            )
-        )
+        admin_urls = patterns('',
+                              url(
+                                  r'^csv_export/$',
+                                  self.admin_site.admin_view(self.csv_export),
+                                  name='survey_answersheet_csv_export'
+                              ))
         return admin_urls + urls
 
     def _get_max_answers(self):
@@ -94,13 +96,13 @@ class AnswerSheetAdmin(admin.ModelAdmin):
 
         # create and return the CSV file
         response = HttpResponse(mimetype='text/csv')
-        response['Content-Disposition'] = 'attachment; filename=%s' % (filename)
+        response['Content-Disposition'] = 'attachment; filename=%s' % filename
 
         # create the csv writer with the response as the output file
         writer = UnicodeWriter(response)
 
         # construct the header line
-        header_line = ['User', 'Questionnaire', 'Date Submitted', 
+        header_line = ['User', 'Questionnaire', 'Date Submitted',
                        'Status', 'Score']
         for idx in range(max_answers):
             header_line.append('Question %s' % (idx+1))
@@ -129,6 +131,6 @@ admin.site.register(AnswerSheet, AnswerSheetAdmin)
 
 class QuestionnaireHolodeckKeysAdmin(admin.ModelAdmin):
     list_display = ('questionnaire', 'metric', 'holodeck_key',)
-    raw_id_fields = ('questionnaire',) 
+    raw_id_fields = ('questionnaire',)
 
 admin.site.register(QuestionnaireHolodeckKeys, QuestionnaireHolodeckKeysAdmin)

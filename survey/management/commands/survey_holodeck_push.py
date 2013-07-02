@@ -12,8 +12,10 @@ from photon import Client
 from survey import constants
 from survey.models import Questionnaire, QuestionnaireHolodeckKeys
 
+
 class Command(BaseCommand):
     help = "Pushes askMAMA survey statistics to Holodeck dashboard."
+
     def handle(self, *args, **options):
         users = User.objects.filter(is_active=True)
         questionnaires = Questionnaire.objects.filter(active=True)
@@ -23,12 +25,15 @@ class Command(BaseCommand):
 
         for questionnaire in questionnaires:
             # check if we have holodeck keys for the questionnaire
-            pending_key = self._get_holodeck_key(questionnaire, 
-                                        constants.QUESTIONNAIRE_PENDING)
-            completed_key = self._get_holodeck_key(questionnaire, 
-                                        constants.QUESTIONNAIRE_COMPLETED)
-            incomplete_key = self._get_holodeck_key(questionnaire, 
-                                        constants.QUESTIONNAIRE_INCOMPLETE)
+            pending_key = self._get_holodeck_key(
+                questionnaire,
+                constants.QUESTIONNAIRE_PENDING)
+            completed_key = self._get_holodeck_key(
+                questionnaire,
+                constants.QUESTIONNAIRE_COMPLETED)
+            incomplete_key = self._get_holodeck_key(
+                questionnaire,
+                constants.QUESTIONNAIRE_INCOMPLETE)
 
             # collect the stats for the questionnaire
             if pending_key or completed_key or incomplete_key:
@@ -80,8 +85,8 @@ class Command(BaseCommand):
         """
         try:
             key = QuestionnaireHolodeckKeys.objects.get(
-                                        questionnaire=questionnaire,
-                                        metric=metric)
+                questionnaire=questionnaire,
+                metric=metric)
             return key.holodeck_key
         except QuestionnaireHolodeckKeys.DoesNotExist:
             pass
