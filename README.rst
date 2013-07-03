@@ -55,3 +55,4 @@ INSTALLED_APPS {
     'survey',
     ....
 }
+::
