@@ -47,23 +47,6 @@ class AnswerSheetAdmin(admin.ModelAdmin):
     raw_id_fields = ('questionnaire', 'user',)
     inlines = (MultiChoiceAnswerAdmin,)
 
-    def get_urls(self):
-        """ Extend the admin urls for the Answersheet admin model to be able to
-            export the submitted sheets as a CSV file
-        """
-        urls = super(AnswerSheetAdmin, self).get_urls()
-        admin_urls = patterns('',
-                              url(
-                                  r'^csv_export/$',
-                                  self.admin_site.admin_view(self.csv_export),
-                                  name='survey_answersheet_csv_export'
-                              ))
-        return admin_urls + urls
-
-    def csv_export(self, request):
-        """ Return a CSV document of the submitted survey answer sheets.
-        """
-
 admin.site.register(AnswerSheet, AnswerSheetAdmin)
 
 
