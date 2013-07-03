@@ -2,6 +2,7 @@
     emailed to interested recipients.
 """
 import datetime
+import logging
 
 from snippetscream.csv_serializer import UnicodeWriter
 from django.core.management.base import BaseCommand
@@ -9,6 +10,8 @@ from django.db.models import Count
 
 from survey import constants
 from survey.models import AnswerSheet
+
+logger = logging.getLogger('survey_answersheet_csv_export')
 
 
 class Command(BaseCommand):
@@ -23,32 +26,36 @@ class Command(BaseCommand):
         # determine the maximum answers to display per sheet
         max_answers = AnswerSheet.objects.get_max_answers()
 
-        outfile = open(filename, 'wt')
+        # open the output file
+        try:
+            with open(filename, 'wt') as outfile:
 
-        # create the csv writer
-        writer = UnicodeWriter(outfile)
+                # create the csv writer
+                writer = UnicodeWriter(outfile)
 
-        # construct the header line
-        header_line = ['User', 'Questionnaire', 'Date Submitted',
-                       'Status', 'Score']
-        for idx in range(max_answers):
-            header_line.append('Question %s' % (idx+1))
-            header_line.append('Answer %s' % (idx+1))
+                # construct the header line
+                header_line = ['User', 'Questionnaire', 'Date Submitted',
+                               'Status', 'Score']
+                for idx in range(max_answers):
+                    header_line.append('Question %s' % (idx+1))
+                    header_line.append('Answer %s' % (idx+1))
 
-        # write the header line
-        writer.writerow(header_line)
+                # write the header line
+                writer.writerow(header_line)
 
-        # loop through the database data to build the response
-        qs = AnswerSheet.objects.all().order_by('questionnaire', 'user')
-        for sheet in qs:
-            data = [sheet.user.username, sheet.questionnaire.title,
-                    "%s" % sheet.date_created,
-                    sheet.get_status_text(),
-                    "%s" % sheet.calculate_score()
-                    ]
-            for answer in sheet.multichoiceanswer_set.all():
-                data.append(answer.question.question_text)
-                data.append(answer.chosen_option.option_text)
-            writer.writerow(data)
+                # loop through the database data to build the response
+                qs = AnswerSheet.objects.all().order_by('questionnaire', 'user')
+                for sheet in qs:
+                    data = [sheet.user.username, sheet.questionnaire.title,
+                            "%s" % sheet.date_created,
+                            sheet.get_status_text(),
+                            "%s" % sheet.calculate_score()
+                            ]
+                    for answer in sheet.multichoiceanswer_set.all():
+                        data.append(answer.question.question_text)
+                        data.append(answer.chosen_option.option_text)
+                    writer.writerow(data)
 
-        outfile.close()
+                outfile.close()
+        except IOError as exc:
+            logger.error("%s: %s", filename, exc.strerror)
