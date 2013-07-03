@@ -195,7 +195,6 @@ class AnswerSheet(models.Model):
             return 'Rejected'
         return 'Unknown'
 
-
     def calculate_score(self):
         """ calculate the user's score.
         """
