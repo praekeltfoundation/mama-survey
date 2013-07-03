@@ -44,7 +44,8 @@ class Command(BaseCommand):
                 writer.writerow(header_line)
 
                 # loop through the database data to build the response
-                qs = AnswerSheet.objects.all().order_by('questionnaire', 'user')
+                qs = AnswerSheet.objects.all().order_by(
+                    'questionnaire', 'user')
                 for sheet in qs:
                     data = [sheet.user.username, sheet.questionnaire.title,
                             "%s" % sheet.date_created,
