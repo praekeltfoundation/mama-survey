@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Count
 from django.contrib.auth.models import User
 
 from survey import constants
@@ -114,6 +115,24 @@ class MultiChoiceOption(models.Model):
         ordering = ('option_order',)
 
 
+class AnswerSheetManager(models.Manager):
+    """ Model manager for answer sheet model.
+    """
+
+    def get_max_answers(self):
+        """ Used to get the maximum number of questions answered across all
+            sheets, for correctly setting the headings row for the CSV export
+            file.
+        """
+        result = 0
+        qs = self.get_query_set().values('id')
+        if qs:
+            qs = qs.annotate(answers=Count('multichoiceanswer'))
+            qs = qs.order_by('-answers')
+            result = list(qs)[0]['answers']
+        return result
+
+
 class AnswerSheet(models.Model):
     """ Contains the answers provided by the user in response to the questions
         contained in the questionnaire.
@@ -122,6 +141,8 @@ class AnswerSheet(models.Model):
     user = models.ForeignKey(User, blank=False)
     date_created = models.DateTimeField(auto_now_add=True)
     date_last_updated = models.DateTimeField(auto_now=True, blank=True)
+
+    objects = AnswerSheetManager()
 
     def __unicode__(self):
         return "%s by %s" % (self.questionnaire.title, self.user.username)
@@ -161,6 +182,19 @@ class AnswerSheet(models.Model):
 
         # default status is pending
         return constants.QUESTIONNAIRE_PENDING
+
+    def get_status_text(self):
+        status = self.get_status()
+        if status == constants.QUESTIONNAIRE_COMPLETED:
+            return 'Completed'
+        elif status == constants.QUESTIONNAIRE_INCOMPLETE:
+            return 'Incomplete'
+        elif status == constants.QUESTIONNAIRE_PENDING:
+            return 'Pending'
+        elif status == constants.QUESTIONNAIRE_REJECTED:
+            return 'Rejected'
+        return 'Unknown'
+
 
     def calculate_score(self):
         """ calculate the user's score.

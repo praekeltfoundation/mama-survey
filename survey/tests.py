@@ -175,6 +175,7 @@ class SurveyTestCase(unittest.TestCase):
             questionnaire=self.questionnaire1,
             user=self.guinea_pig)
         self.assertEqual(sheet.get_status(), constants.QUESTIONNAIRE_PENDING)
+        self.assertEqual(sheet.get_status_text(), 'Pending')
         self.assertEqual(self.questionnaire1.get_status(self.guinea_pig),
                          constants.QUESTIONNAIRE_PENDING)
 
@@ -184,6 +185,7 @@ class SurveyTestCase(unittest.TestCase):
             chosen_option=self.option2)
         self.assertEqual(sheet.get_status(),
                          constants.QUESTIONNAIRE_INCOMPLETE)
+        self.assertEqual(sheet.get_status_text(), 'Incomplete')
         self.assertEqual(self.questionnaire1.get_status(self.guinea_pig),
                          constants.QUESTIONNAIRE_INCOMPLETE)
 
@@ -195,6 +197,7 @@ class SurveyTestCase(unittest.TestCase):
             question=question2,
             chosen_option=option1)
         self.assertEqual(sheet.get_status(), constants.QUESTIONNAIRE_COMPLETED)
+        self.assertEqual(sheet.get_status_text(), 'Completed')
         self.assertEqual(self.questionnaire1.get_status(self.guinea_pig),
                          constants.QUESTIONNAIRE_COMPLETED)
 
@@ -279,3 +282,52 @@ class SurveyTestCase(unittest.TestCase):
             user=guinea_pig3)
         self.assertIsNotNone(sheet2)
         self.assertNotEqual(sheet1, sheet2)
+
+    def test_max_answers(self):
+        # Test the maximum answers method on the answersheet manager.
+
+        # No answers yet
+        self.assertEqual(AnswerSheet.objects.get_max_answers(), 0)
+
+        sheet = AnswerSheet.objects.create(
+            questionnaire=self.questionnaire1,
+            user=self.guinea_pig)
+
+        # Create an answer for question1
+        sheet.multichoiceanswer_set.create(
+            question=self.question1,
+            chosen_option=self.option2)
+        self.assertEqual(AnswerSheet.objects.get_max_answers(), 1)
+
+        guinea_pig3, created = User.objects.get_or_create(
+            username='thepig3',
+            password='dirtysecret3')
+        guinea_pig3.active = True
+
+        # Create another sheet ans add an answer
+        sheet1 = AnswerSheet.objects.create(
+            questionnaire=self.questionnaire1,
+            user=guinea_pig3)
+        sheet1.multichoiceanswer_set.create(
+            question=self.question1,
+            chosen_option=self.option2)
+        self.assertEqual(AnswerSheet.objects.get_max_answers(), 1)
+
+        # Add another question
+        question2 = self.questionnaire1.multichoicequestion_set.create(
+            question_order=1,
+            question_text='Question 2 again')
+        option1 = question2.multichoiceoption_set.create(
+            option_order=0,
+            option_text='Option 1 again',
+            is_correct_option=True)
+        option2 = question2.multichoiceoption_set.create(
+            option_order=1,
+            option_text='Option 2 again',
+            is_correct_option=False)
+
+        # Add another answer
+        sheet1.multichoiceanswer_set.create(
+            question=question2,
+            chosen_option=option2)
+        self.assertEqual(AnswerSheet.objects.get_max_answers(), 2)
