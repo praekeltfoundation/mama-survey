@@ -2,6 +2,7 @@
 """
 import datetime
 from urllib2 import HTTPError
+import logging
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -11,6 +12,8 @@ from django.contrib.auth.models import User
 from photon import Client
 from survey import constants
 from survey.models import Questionnaire, QuestionnaireHolodeckKeys
+
+logger = logging.getLogger('survey_holodeck_push')
 
 
 class Command(BaseCommand):
@@ -56,7 +59,7 @@ class Command(BaseCommand):
                             timestamp=now
                         )
                     except HTTPError:
-                        pass
+                        logger.error("Could not connect to holodeck service")
 
                 # send the incomplete stats to holodeck
                 if incomplete_key:
@@ -67,7 +70,7 @@ class Command(BaseCommand):
                             timestamp=now
                         )
                     except HTTPError:
-                        pass
+                        logger.error("Could not connect to holodeck service")
 
                 # send the complete stats to holodeck
                 if completed_key:
@@ -78,7 +81,7 @@ class Command(BaseCommand):
                             timestamp=now
                         )
                     except HTTPError:
-                        pass
+                        logger.error("Could not connect to holodeck service")
 
     def _get_holodeck_key(self, questionnaire, metric):
         """ Retrieve the specified holodeck key for the qeustionnaire
@@ -89,4 +92,5 @@ class Command(BaseCommand):
                 metric=metric)
             return key.holodeck_key
         except QuestionnaireHolodeckKeys.DoesNotExist:
-            pass
+            logger.error("Holodeck API key for survey metric %s missing",
+                         metric)
