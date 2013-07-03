@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from StringIO import StringIO
 
 from django.utils import unittest
@@ -341,8 +343,10 @@ class SurveyTestCase(BaseSurveyTestCase):
 
 class SurveyCommandsTestCase(BaseSurveyTestCase):
 
-    def test_something(self):
-        self.assertEqual(self.questionnaire1.number_of_questions(), 1)
+    def test_unicode_output(self):
+        # Add a user with a unicode username
+        foreigner = User.objects.create(username=u'Ťũńŏřęķ',
+                                        password='noneofyourbusiness')
 
         # Add a question to questionnaire 1
         question2 = self.questionnaire1.multichoicequestion_set.create(
@@ -357,18 +361,18 @@ class SurveyCommandsTestCase(BaseSurveyTestCase):
             option_text='Option 2',
             is_correct_option=False)
 
+        # Create an answersheet for the foreigner
         sheet = AnswerSheet.objects.create(
             questionnaire=self.questionnaire1,
-            user=self.guinea_pig)
-
+            user=foreigner)
         sheet.multichoiceanswer_set.create(
             question=self.question1,
             chosen_option=self.option2)
-
         sheet.multichoiceanswer_set.create(
             question=question2,
             chosen_option=option1)
 
+        # generate the output file
         mock_file = StringIO()
         command = survey_answersheet_csv_export.Command()
         command.get_file = lambda fn: mock_file
@@ -377,4 +381,5 @@ class SurveyCommandsTestCase(BaseSurveyTestCase):
         command.handle()
         csv_data = mock_file.getvalue()
 
-        print 'got CSV data for testing!', csv_data
+        # check for a unicode string in the output
+        self.assertIn(u'Ťũńŏřęķ', csv_data.decode('utf-8'))
