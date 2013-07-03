@@ -7,7 +7,7 @@ from survey.models import (Questionnaire, MultiChoiceQuestion,
                            MultiChoiceOption, AnswerSheet, MultiChoiceAnswer)
 
 
-class SurveyTestCase(unittest.TestCase):
+class BaseSurveyTestCase(unittest.TestCase):
 
     def setUp(self):
         self.boss_man = User.objects.create(username='boss',
@@ -44,6 +44,9 @@ class SurveyTestCase(unittest.TestCase):
         self.questionnaire1.delete()
         self.guinea_pig.delete()
         self.boss_man.delete()
+
+
+class SurveyTestCase(BaseSurveyTestCase):
 
     def test_number_of_questions(self):
         self.assertEqual(self.questionnaire1.number_of_questions(), 1)
@@ -331,3 +334,10 @@ class SurveyTestCase(unittest.TestCase):
             question=question2,
             chosen_option=option2)
         self.assertEqual(AnswerSheet.objects.get_max_answers(), 2)
+
+
+class SurveyCommandsTestCase(BaseSurveyTestCase):
+
+    def test_something(self):
+        self.assertTrue('ok')
+
