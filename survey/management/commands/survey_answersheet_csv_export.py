@@ -24,6 +24,9 @@ class Command(BaseCommand):
     def get_file(self, filename):
         return open(filename, 'wt')
 
+    def close_file(self, fp):
+        return fp.close()
+
     def handle(self, *args, **options):
         # generate a name for the CSV file
 
@@ -61,4 +64,4 @@ class Command(BaseCommand):
                 data.append(answer.chosen_option.option_text)
             writer.writerow(data)
 
-        outfile.close()
+        self.close_file(outfile)

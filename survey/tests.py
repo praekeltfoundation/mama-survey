@@ -1,8 +1,11 @@
+from StringIO import StringIO
+
 from django.utils import unittest
 from django.db.utils import IntegrityError
 from django.contrib.auth.models import User
 
 from survey import constants
+from survey.management.commands import survey_answersheet_csv_export
 from survey.models import (Questionnaire, MultiChoiceQuestion,
                            MultiChoiceOption, AnswerSheet, MultiChoiceAnswer)
 
@@ -339,5 +342,39 @@ class SurveyTestCase(BaseSurveyTestCase):
 class SurveyCommandsTestCase(BaseSurveyTestCase):
 
     def test_something(self):
-        self.assertTrue('ok')
+        self.assertEqual(self.questionnaire1.number_of_questions(), 1)
 
+        # Add a question to questionnaire 1
+        question2 = self.questionnaire1.multichoicequestion_set.create(
+            question_order=1,
+            question_text='Question 2')
+        option1 = question2.multichoiceoption_set.create(
+            option_order=0,
+            option_text='Option 1',
+            is_correct_option=True)
+        option2 = question2.multichoiceoption_set.create(
+            option_order=1,
+            option_text='Option 2',
+            is_correct_option=False)
+
+        sheet = AnswerSheet.objects.create(
+            questionnaire=self.questionnaire1,
+            user=self.guinea_pig)
+
+        sheet.multichoiceanswer_set.create(
+            question=self.question1,
+            chosen_option=self.option2)
+
+        sheet.multichoiceanswer_set.create(
+            question=question2,
+            chosen_option=option1)
+
+        mock_file = StringIO()
+        command = survey_answersheet_csv_export.Command()
+        command.get_file = lambda fn: mock_file
+        command.close_file = lambda fp: True
+        command.generate_file_name = lambda: 'foo.csv'
+        command.handle()
+        csv_data = mock_file.getvalue()
+
+        print 'got CSV data for testing!', csv_data
