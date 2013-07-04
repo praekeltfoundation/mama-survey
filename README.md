@@ -46,8 +46,14 @@ For development, install the application in the askMAMA development site with:
 
 The following settings must be added to settings.py:
 
-    INSTALLED_APPS {
-        .....
+    TEMPLATE_DIRS += (
+        os.path.join(PATH, "survey", "templates", "mobi"),
+    )
+
+    INSTALLED_APPS += (
         'survey',
-        ....
-    }
+    )
+
+    LOGIN_REDIRECT_URL = '/survey/check-for-survey/'
+
+    HOLODECK_URL = 'http://localhost:8001/'
