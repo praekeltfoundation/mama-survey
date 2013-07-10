@@ -28,7 +28,7 @@ class ChooseActionFormView(FormView):
     """ Present the 'Now', 'Later', 'Decline' choices to the user for the
         applicable questionnaire.
     """
-    template_name = "survey/survey_choice.html"
+    template_name = "mobi/survey/survey_choice.html"
     form_class = SurveyChoiceForm
 
     def get(self, request, *args, **kwargs):
@@ -63,7 +63,7 @@ class SurveyFormView(FormView):
         If no more questions, redirect to the 'Thank you' page for the
         applicable questionnaire.
     """
-    template_name = "survey/survey_form.html"
+    template_name = "mobi/survey/survey_form.html"
     form_class = SurveyQuestionForm
 
     def get(self, request, *args, **kwargs):
@@ -159,7 +159,7 @@ class SurveyFormView(FormView):
 class SurveyThankyouView(TemplateView):
     """ Display the 'Thank you' page for the applicagble questionnaire.
     """
-    template_name = 'survey/survey_thankyou.html'
+    template_name = 'mobi/survey/survey_thankyou.html'
 
     def get_context_data(self, **kwargs):
         survey_id = kwargs['survey_id']
@@ -173,4 +173,4 @@ class SurveyThankyouView(TemplateView):
 class SurveyExitView(TemplateView):
     """ Display a page if the user pressed 'Exit' on any of the question pages.
     """
-    template_name = 'survey/survey_exit.html'
+    template_name = 'mobi/survey/survey_exit.html'
