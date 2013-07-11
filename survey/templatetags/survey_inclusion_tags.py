@@ -8,7 +8,7 @@ from survey.models import Questionnaire
 register = template.Library()
 
 
-@register.inclusion_tag('mobi/survey/inclusion_tags/survey_listing.html',
+@register.inclusion_tag('survey/inclusion_tags/survey_listing.html',
                         takes_context=True)
 def show_survey(context):
     context = copy(context)
