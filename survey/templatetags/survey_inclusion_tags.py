@@ -14,8 +14,10 @@ def show_survey(context):
     context = copy(context)
     user = context['user']
     if user.is_authenticated():
-        survey = Questionnaire.objects.questionnaire_for_user(user)
-        context.update({
-            'survey': survey
-        })
+        profile = user.profile
+        if not profile.decline_surveys:
+            survey = Questionnaire.objects.questionnaire_for_user(user)
+            context.update({
+                'survey': survey
+            })
     return context

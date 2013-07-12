@@ -30,7 +30,7 @@ def as_div(form):
 _SURVEY_CHOICES = (
     ('now', _('I will complete the survey now!')),
     ('later', _('Please remind me later.')),
-    # ('decline', _('I do not wish to take part in surveys.')),
+    ('decline', _('I do not wish to take part in surveys.')),
 )
 
 
