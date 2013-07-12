@@ -20,7 +20,8 @@ class CheckForQuestionnaireView(RedirectView):
         if not profile.decline_surveys:
             questionnaire = Questionnaire.objects.questionnaire_for_user(user)
             if questionnaire:
-                return reverse('survey:survey_action', args=(questionnaire.pk,))
+                return reverse('survey:survey_action',
+                               args=(questionnaire.pk,))
 
         return super(CheckForQuestionnaireView,
                      self).get_redirect_url(**kwargs)
