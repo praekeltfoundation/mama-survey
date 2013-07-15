@@ -16,9 +16,12 @@ class CheckForQuestionnaireView(RedirectView):
 
     def get_redirect_url(self, **kwargs):
         user = self.request.user
-        questionnaire = Questionnaire.objects.questionnaire_for_user(user)
-        if questionnaire:
-            return reverse('survey:survey_action', args=(questionnaire.pk,))
+        profile = user.profile
+        if not profile.decline_surveys:
+            questionnaire = Questionnaire.objects.questionnaire_for_user(user)
+            if questionnaire:
+                return reverse('survey:survey_action',
+                               args=(questionnaire.pk,))
 
         return super(CheckForQuestionnaireView,
                      self).get_redirect_url(**kwargs)
@@ -54,8 +57,13 @@ class ChooseActionFormView(FormView):
         choice = self.request.POST.get('proceed_choice', 'decline')
         if choice == 'now':
             return reverse('survey:survey_form', args=(survey_id))
-        else:
-            return reverse('home')
+        elif choice == 'decline':
+            user = self.request.user
+            profile = user.profile
+            profile.decline_surveys = True
+            profile.save()
+
+        return reverse('home')
 
 
 class SurveyFormView(FormView):

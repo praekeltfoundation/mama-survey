@@ -13,11 +13,12 @@ class QuestionnaireManager(models.Manager):
     def questionnaire_for_user(self, user):
         """ Determine if a questionnaire is available for a given user
         """
-        qs = self.get_query_set().filter(active=True)
-        for itm in qs:
-            # look for a questionnaire with available questions
-            if itm.get_status(user) != constants.QUESTIONNAIRE_COMPLETED:
-                return itm
+        if not user.profile.decline_surveys:
+            qs = self.get_query_set().filter(active=True)
+            for itm in qs:
+                # look for a questionnaire with available questions
+                if itm.get_status(user) != constants.QUESTIONNAIRE_COMPLETED:
+                    return itm
 
 
 class Questionnaire(models.Model):

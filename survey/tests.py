@@ -73,6 +73,12 @@ class SurveyTestCase(BaseSurveyTestCase):
 
     def test_available_questionnaire_for_user(self):
         # An inactive qeustionnaire is not available
+
+        class DummyProfile(object):
+            decline_surveys = False
+
+        self.guinea_pig.profile = DummyProfile()
+
         self.assertIsNone(
             Questionnaire.objects.questionnaire_for_user(self.guinea_pig))
 
@@ -113,10 +119,14 @@ class SurveyTestCase(BaseSurveyTestCase):
         # create a new user
         guinea_pig3 = User.objects.create(username='thepig3',
                                           password='dirtysecret3')
+        guinea_pig3.profile = DummyProfile()
         guinea_pig3.active = True
         self.assertEqual(
             Questionnaire.objects.questionnaire_for_user(guinea_pig3),
             self.questionnaire1)
+        guinea_pig3.profile.decline_surveys = True
+        self.assertIsNone(
+            Questionnaire.objects.questionnaire_for_user(guinea_pig3))
 
     def test_get_next_question_for_user(self):
         # Add a question to questionnaire 1

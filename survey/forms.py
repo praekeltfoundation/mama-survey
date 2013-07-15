@@ -28,9 +28,9 @@ def as_div(form):
 
 
 _SURVEY_CHOICES = (
-    ('now', _('I will complete the survey now!')),
-    ('later', _('Please remind me later.')),
-    # ('decline', _('I do not wish to take part in surveys.')),
+    ('now', _('Yes!')),
+    ('later', _('Ask me later.')),
+    ('decline', _('Do not ask me again.')),
 )
 
 
@@ -41,7 +41,7 @@ class SurveyChoiceForm(forms.Form):
     proceed_choice = forms.ChoiceField(
         widget=RadioSelect,
         choices=_SURVEY_CHOICES,
-        label=_('How would you like to proceed?'),
+        label=_('Would you like to participate?'),
         initial='now')
 
     as_div = as_div
