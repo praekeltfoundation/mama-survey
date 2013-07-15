@@ -11,6 +11,14 @@ from survey.management.commands import survey_answersheet_csv_export
 from survey.models import (Questionnaire, MultiChoiceQuestion,
                            MultiChoiceOption, AnswerSheet, MultiChoiceAnswer)
 
+from mock import patch
+
+
+class DummyProfile(object):
+
+    def __init__(self, decline):
+        self.decline_surveys = decline
+
 
 class BaseSurveyTestCase(unittest.TestCase):
 
@@ -71,13 +79,10 @@ class SurveyTestCase(BaseSurveyTestCase):
 
         self.assertEqual(self.questionnaire1.number_of_questions(), 2)
 
-    def test_available_questionnaire_for_user(self):
+    @patch.object(User, 'get_profile')
+    def test_available_questionnaire_for_user(self, get_profile):
         # An inactive qeustionnaire is not available
-
-        class DummyProfile(object):
-            decline_surveys = False
-
-        self.guinea_pig.profile = DummyProfile()
+        get_profile.return_value = DummyProfile(False)
 
         self.assertIsNone(
             Questionnaire.objects.questionnaire_for_user(self.guinea_pig))
@@ -116,17 +121,16 @@ class SurveyTestCase(BaseSurveyTestCase):
             Questionnaire.objects.questionnaire_for_user(self.guinea_pig),
             questionnaire2)
 
+    @patch.object(User, 'get_profile')
+    def test_available_questionnaire_for_declined_user(self, get_profile):
+        get_profile.return_value = DummyProfile(True)
         # create a new user
-        guinea_pig3 = User.objects.create(username='thepig3',
-                                          password='dirtysecret3')
-        guinea_pig3.profile = DummyProfile()
-        guinea_pig3.active = True
-        self.assertEqual(
-            Questionnaire.objects.questionnaire_for_user(guinea_pig3),
-            self.questionnaire1)
-        guinea_pig3.profile.decline_surveys = True
+        guinea_pig = User.objects.create(username='thepig3',
+                                         password='dirtysecret3')
+        guinea_pig.active = True
+
         self.assertIsNone(
-            Questionnaire.objects.questionnaire_for_user(guinea_pig3))
+            Questionnaire.objects.questionnaire_for_user(guinea_pig))
 
     def test_get_next_question_for_user(self):
         # Add a question to questionnaire 1

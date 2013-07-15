@@ -13,7 +13,7 @@ class QuestionnaireManager(models.Manager):
     def questionnaire_for_user(self, user):
         """ Determine if a questionnaire is available for a given user
         """
-        if not user.profile.decline_surveys:
+        if not user.get_profile().decline_surveys:
             qs = self.get_query_set().filter(active=True)
             for itm in qs:
                 # look for a questionnaire with available questions
