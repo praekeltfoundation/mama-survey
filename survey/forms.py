@@ -1,7 +1,6 @@
 from django.utils.translation import ugettext_lazy as _
 from django.forms.widgets import RadioSelect
 
-# from pml import forms as pml_forms
 from django import forms
 
 
