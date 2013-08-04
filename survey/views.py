@@ -90,7 +90,7 @@ class SurveyFormView(FormView):
         form = self.get_form(form_class)
 
         # store the survey id in the form
-        form = self._update_the_form(form, survey_id, next_question)
+        form.update_the_form(survey_id, next_question)
 
         # display the form
         return self.render_to_response(self.get_context_data(
@@ -98,7 +98,6 @@ class SurveyFormView(FormView):
             survey_id=survey_id))
 
     def post(self, request, *args, **kwargs):
-
         # check if the user pressed the 'Exit' button.
         if request.POST.get('submit') == 'Exit':
             return HttpResponseRedirect(reverse('survey:exit_page'))
@@ -110,27 +109,27 @@ class SurveyFormView(FormView):
         survey_id = request.POST.get('survey_id')
         question_id = request.POST.get('question_id')
         question = MultiChoiceQuestion.objects.get(pk=question_id)
-        form = self._update_the_form(form, survey_id, question)
+        form.update_the_form(survey_id, question)
 
         if form.is_valid():
             return self.form_valid(form)
         else:
             return self.form_invalid(form)
 
-    def _update_the_form(self, form, survey_id, the_question):
-        """ Create the options for the question and store some hidden fields to
-            keep track of where we are.
-        """
-        # store the survey id in the form
-        form.fields['survey_id'].initial = survey_id
+    # def _update_the_form(self, form, survey_id, the_question):
+    #     """ Create the options for the question and store some hidden fields to
+    #         keep track of where we are.
+    #     """
+    #     # store the survey id in the form
+    #     form.fields['survey_id'].initial = survey_id
 
-        # set the question id and question field attributes on the form
-        form.fields['question_id'].initial = the_question.pk
-        form.fields['question'].label = the_question.question_text
-        form.fields['question'].choices = [
-            (itm.pk, itm.option_text,)
-            for itm in the_question.multichoiceoption_set.all()]
-        return form
+    #     # set the question id and question field attributes on the form
+    #     form.fields['question_id'].initial = the_question.pk
+    #     form.fields['question'].label = the_question.question_text
+    #     form.fields['question'].choices = [
+    #         (itm.pk, itm.option_text,)
+    #         for itm in the_question.multichoiceoption_set.all()]
+    #     return form
 
     def form_invalid(self, form):
         survey_id = form.data['survey_id']
