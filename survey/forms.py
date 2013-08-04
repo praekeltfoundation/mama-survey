@@ -59,7 +59,7 @@ class SurveyQuestionMixin(object):
 
         # set the question id and question field attributes on the form
         self.fields['question_id'].initial = the_question.pk
-        self.fields['question'].label = the_question.question_text
+        self.fields['question'].widget.label = the_question.question_text
         self.fields['question'].choices = [
             (itm.pk, itm.option_text,)
             for itm in the_question.multichoiceoption_set.all()]
