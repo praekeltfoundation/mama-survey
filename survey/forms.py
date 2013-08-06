@@ -1,7 +1,6 @@
 from django.utils.translation import ugettext_lazy as _
 from django.forms.widgets import RadioSelect
 
-# from pml import forms as pml_forms
 from django import forms
 
 
@@ -47,7 +46,26 @@ class SurveyChoiceForm(forms.Form):
     as_div = as_div
 
 
-class SurveyQuestionForm(forms.Form):
+class SurveyQuestionMixin(object):
+    """ Mixin class that provides a method to update the multiple choice
+        question choices.
+    """
+    def update_the_form(self, survey_id, the_question):
+        """ Create the options for the question and store some hidden fields to
+            keep track of where we are.
+        """
+        # store the survey id in the form
+        self.fields['survey_id'].initial = survey_id
+
+        # set the question id and question field attributes on the form
+        self.fields['question_id'].initial = the_question.pk
+        self.fields['question'].widget.label = the_question.question_text
+        self.fields['question'].choices = [
+            (itm.pk, itm.option_text,)
+            for itm in the_question.multichoiceoption_set.all()]
+
+
+class SurveyQuestionForm(SurveyQuestionMixin, forms.Form):
     """ Display the options and capture the answer for one question in the
         survey.
     """
