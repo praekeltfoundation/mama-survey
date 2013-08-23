@@ -124,6 +124,7 @@ class SurveyTestCase(BaseSurveyTestCase):
     @patch.object(User, 'get_profile')
     def test_available_questionnaire_for_declined_user(self, get_profile):
         get_profile.return_value = DummyProfile(True)
+
         # create a new user
         guinea_pig = User.objects.create(username='thepig3',
                                          password='dirtysecret3')
@@ -178,7 +179,10 @@ class SurveyTestCase(BaseSurveyTestCase):
         self.assertIsNone(
             self.questionnaire1.get_next_question_for_user(self.guinea_pig))
 
-    def test_answer_sheet(self):
+    @patch.object(User, 'get_profile')
+    def test_answer_sheet(self, get_profile):
+        get_profile.return_value = DummyProfile(False)
+
         # Add a question to questionnaire 1
         question2 = self.questionnaire1.multichoicequestion_set.create(
             question_order=1,

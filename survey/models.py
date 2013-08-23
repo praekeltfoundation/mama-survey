@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models import Count
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 
 from survey import constants
 
@@ -60,6 +61,11 @@ class Questionnaire(models.Model):
             return self.multichoicequestion_set.all()[0]
 
     def get_status(self, user):
+        try:
+            if user.get_profile().decline_surveys:
+                return constants.QUESTIONNAIRE_REJECTED
+        except ObjectDoesNotExist:
+            pass
         qs = self.answersheet_set.filter(user=user)
         if not qs.exists():
             return constants.QUESTIONNAIRE_PENDING
