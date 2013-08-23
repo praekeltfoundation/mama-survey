@@ -20,7 +20,7 @@ class Command(BaseCommand):
     help = "Pushes askMAMA survey statistics to Holodeck dashboard."
 
     def handle(self, *args, **options):
-        users = User.objects.filter(is_active=True)
+        users = User.objects.filter(is_active=True, is_staff=False)
         questionnaires = Questionnaire.objects.filter(active=True)
 
         client = Client(server=settings.HOLODECK_URL)
@@ -37,14 +37,19 @@ class Command(BaseCommand):
             incomplete_key = self._get_holodeck_key(
                 questionnaire,
                 constants.QUESTIONNAIRE_INCOMPLETE)
+            rejected_key = self._get_holodeck_key(
+                questionnaire,
+                constants.QUESTIONNAIRE_REJECTED)
 
             # collect the stats for the questionnaire
-            if pending_key or completed_key or incomplete_key:
-                pending = incomplete = completed = 0
+            if pending_key or completed_key or incomplete_key or rejected_key:
+                pending = incomplete = completed = rejected = 0
                 for user in users:
                     status = questionnaire.get_status(user)
                     if status == constants.QUESTIONNAIRE_PENDING:
                         pending += 1
+                    elif status == constants.QUESTIONNAIRE_REJECTED:
+                        rejected += 1
                     elif status == constants.QUESTIONNAIRE_INCOMPLETE:
                         incomplete += 1
                     elif status == constants.QUESTIONNAIRE_COMPLETED:
@@ -78,6 +83,17 @@ class Command(BaseCommand):
                         client.send(
                             samples=(("Total", completed),),
                             api_key=completed_key,
+                            timestamp=now
+                        )
+                    except HTTPError:
+                        logger.error("Could not connect to holodeck service")
+
+                # send the rejected stats to holodeck
+                if rejected_key:
+                    try:
+                        client.send(
+                            samples=(("Total", rejected),),
+                            api_key=rejected_key,
                             timestamp=now
                         )
                     except HTTPError:
