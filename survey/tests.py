@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
 
+from mock import patch
+
 from StringIO import StringIO
 
 from django.utils import unittest
-from django.db.utils import IntegrityError
+from django.db.utils import IntegrityError, DatabaseError
 from django.contrib.auth.models import User
 
 from survey import constants
 from survey.management.commands import survey_answersheet_csv_export
-from survey.models import (Questionnaire, MultiChoiceQuestion,
+from survey.models import (Questionnaire, EUNutritionQuiz, MultiChoiceQuestion,
                            MultiChoiceOption, AnswerSheet, MultiChoiceAnswer)
-
-from mock import patch
+from post.models import Post
 
 
 class DummyProfile(object):
@@ -54,9 +55,16 @@ class BaseSurveyTestCase(unittest.TestCase):
             is_correct_option=True)
 
     def tearDown(self):
-        self.questionnaire1.delete()
-        self.guinea_pig.delete()
-        self.boss_man.delete()
+        try:
+            self.option2.delete()
+            self.option1.delete()
+            self.question1.delete()
+            self.questionnaire1.delete()
+            self.guinea_pig.delete()
+            self.boss_man.delete()
+        except (DatabaseError, IntegrityError):
+            from django.db import transaction
+            transaction.rollback()
 
 
 class SurveyTestCase(BaseSurveyTestCase):
@@ -126,8 +134,8 @@ class SurveyTestCase(BaseSurveyTestCase):
         get_profile.return_value = DummyProfile(True)
 
         # create a new user
-        guinea_pig = User.objects.create(username='thepig3',
-                                         password='dirtysecret3')
+        guinea_pig = User.objects.create(username='thepig6',
+                                         password='dirtysecret6')
         guinea_pig.active = True
 
         self.assertIsNone(
@@ -291,11 +299,6 @@ class SurveyTestCase(BaseSurveyTestCase):
 
     def test_unique(self):
         # check for integrity error violations
-        guinea_pig3, created = User.objects.get_or_create(
-            username='thepig3',
-            password='dirtysecret3')
-        guinea_pig3.active = True
-
         sheet1 = AnswerSheet.objects.create(
             questionnaire=self.questionnaire1,
             user=self.guinea_pig)
@@ -303,9 +306,20 @@ class SurveyTestCase(BaseSurveyTestCase):
                           AnswerSheet.objects.create,
                           questionnaire=self.questionnaire1,
                           user=self.guinea_pig)
+
+    def test_not_thesame(self):
+        # test that 2 objects are not the same
+        gp = User.objects.create(
+            username='thepig5',
+            password='dirtysecret5')
+        gp.active = True
+
+        sheet1 = AnswerSheet.objects.create(
+            questionnaire=self.questionnaire1,
+            user=self.guinea_pig)
         sheet2 = AnswerSheet.objects.create(
             questionnaire=self.questionnaire1,
-            user=guinea_pig3)
+            user=gp)
         self.assertIsNotNone(sheet2)
         self.assertNotEqual(sheet1, sheet2)
 
@@ -325,7 +339,7 @@ class SurveyTestCase(BaseSurveyTestCase):
             chosen_option=self.option2)
         self.assertEqual(AnswerSheet.objects.get_max_answers(), 1)
 
-        guinea_pig3, created = User.objects.get_or_create(
+        guinea_pig3 = User.objects.create(
             username='thepig3',
             password='dirtysecret3')
         guinea_pig3.active = True
@@ -401,3 +415,57 @@ class SurveyCommandsTestCase(BaseSurveyTestCase):
 
         # check for a unicode string in the output
         self.assertIn(u'Ťũńŏřęķ', csv_data.decode('utf-8'))
+
+
+class EUQuizTestCase(BaseSurveyTestCase):
+    """ Test the functionality of the EU Survey Test Case
+    """
+    @patch.object(User, 'get_profile')
+    def test_eu_quiz_not_available(self, get_profile):
+        get_profile.return_value = DummyProfile(False)
+
+        # Create a post for the EU Quiz to hang off of
+        post = Post.objects.create(
+            content='This is Test content',
+            state='published',
+            slug='test-content',
+            title='Test Content',
+            owner=self.boss_man
+        )
+
+        # Create an inactive EU Nutrition quiz
+        eu_quiz = EUNutritionQuiz.objects.create(
+            post=post,
+            banner_description = 'This is an EU Nutrition banner',
+            introduction_text='EU Intro text',
+            thank_you_text='EU Thank you',
+            created_by=self.boss_man,
+            active=False
+        )
+        eu_question1 = eu_quiz.multichoicequestion_set.create(
+            question_order=0,
+            question_text='EU Question 1')
+        eu_option1 = eu_question1.multichoiceoption_set.create(
+            option_order=0,
+            option_text='EU Option 1',
+            is_correct_option=False)
+        eu_option2 = eu_question1.multichoiceoption_set.create(
+            option_order=1,
+            option_text='EU Option 2',
+            is_correct_option=True)
+
+        # Check that we get the active questionnaire instance, and not the EU
+        # Quiz instance.
+        self.questionnaire1.active = True
+        self.questionnaire1.save()
+        self.assertEqual(
+            Questionnaire.objects.questionnaire_for_user(self.guinea_pig),
+            self.questionnaire1)
+
+        # Set the active flag to True for the EU Quiz, and check that we still
+        # get the normal questionnaire as the next one.
+        eu_quiz.active = True
+        eu_quiz.save()
+        self.assertEqual(
+            Questionnaire.objects.questionnaire_for_user(self.guinea_pig),
+            self.questionnaire1)

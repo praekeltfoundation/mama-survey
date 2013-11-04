@@ -77,6 +77,21 @@ class Questionnaire(models.Model):
         return self.multichoicequestion_set.count()
 
 
+class EUNutritionQuiz(Questionnaire):
+    """ Defines a model to be used to present EU Nutrition surveys linked to
+        a Post. Adds a description field to display in a banner.
+    """
+    post = models.ForeignKey(
+        'post.Post', 
+        blank=False,
+        related_name='quiz_post')
+    banner_description = models.TextField(blank=False)
+
+    class Meta:
+        verbose_name = 'EU Nutrition Quiz'
+        verbose_name_plural = 'EU Nutrition Quizzes'
+
+
 class QuestionnaireHolodeckKeys(models.Model):
     """ Set up the holodeck keys for the metrics being tracked.
     """

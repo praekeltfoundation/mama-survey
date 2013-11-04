@@ -16,8 +16,9 @@ setup(
     install_requires = [
         'django==1.4.5',
         'django-snippetscream==0.0.7',
-        'south==0.8.1',
-        'photon==0.0.5'
+        'south==0.8.2',
+        'photon==0.0.5',
+        'jmbo-post==0.1.7'
     ],
     tests_require=[
         'django-setuptest==0.1.4',
