@@ -18,7 +18,8 @@ setup(
         'django-snippetscream==0.0.7',
         'south==0.8.2',
         'photon==0.0.5',
-        'jmbo-post==0.1.7'
+        'jmbo==0.5.5',
+        'jmbo-post'
     ],
     tests_require=[
         'django-setuptest==0.1.4',
