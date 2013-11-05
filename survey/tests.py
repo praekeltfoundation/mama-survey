@@ -39,7 +39,6 @@ class BaseSurveyTestCase(unittest.TestCase):
         guinea_pig.save()
         return guinea_pig
 
-
     def create_questionnaire(self, owner):
         questionnaire = Questionnaire.objects.create(
             title='MAMA Questionnaire',
@@ -505,7 +504,7 @@ class EUQuizTestCase(BaseSurveyTestCase):
     """ Test the functionality of the EU Survey Test Case
     """
     @patch.object(User, 'get_profile')
-    def test_eu_quiz_not_available(self, get_profile):
+    def test_eu_quiz(self, get_profile):
         get_profile.return_value = DummyProfile(False)
 
         boss_man = self.create_boss_man()
@@ -524,7 +523,7 @@ class EUQuizTestCase(BaseSurveyTestCase):
         # Create an inactive EU Nutrition quiz
         eu_quiz = EUNutritionQuiz.objects.create(
             post=post,
-            banner_description = 'This is an EU Nutrition banner',
+            banner_description='This is an EU Nutrition banner',
             introduction_text='EU Intro text',
             thank_you_text='EU Thank you',
             created_by=boss_man,
@@ -557,6 +556,20 @@ class EUQuizTestCase(BaseSurveyTestCase):
         self.assertEqual(
             Questionnaire.objects.questionnaire_for_user(guinea_pig),
             questionnaire1)
+
+        # Check that we don't get quizzes on the home page that don't have the
+        # flag set.
+        self.assertEqual(
+            EUNutritionQuiz.objects.home_page_quizzes(guinea_pig),
+            [])
+
+        # Check that we get only EU quizzes on the home page, when getting what
+        # is available for the user.
+        eu_quiz.show_on_home_page = True
+        eu_quiz.save()
+        self.assertIn(
+            eu_quiz,
+            EUNutritionQuiz.objects.home_page_quizzes(guinea_pig))
 
         boss_man.delete()
         questionnaire1.delete()

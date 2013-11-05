@@ -1,0 +1,17 @@
+{% for survey in eu_quizzes %}
+  <div class="h1">{{ survey.title }}</div>
+  <div class="content-inner">
+    <div class="items">
+      <div class="item no-pic">
+        <div class="meta">
+          {{ survey.banner_description|linebreaks }}
+        </div>
+        <div class="meta">
+          Click <a href="{% url survey:survey_action survey.id %}">here</a> to
+          participate in the survey. By participating, you stand a chance to
+          win airtime!
+        </div>
+      </div>
+    </div>
+  </div>
+{% endfor %}

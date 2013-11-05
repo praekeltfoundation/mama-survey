@@ -77,15 +77,31 @@ class Questionnaire(models.Model):
         return self.multichoicequestion_set.count()
 
 
+class EUQuizManager(models.Manager):
+    """ Model manager for questionnaire models. Used mainly to determine if a
+        questionnaire is available for a given user.
+    """
+
+    def home_page_quizzes(self, user):
+        """ Return EU Nutrition quizzes that needs to show on the home page.
+        """
+        qs = self.get_query_set().filter(active=True, show_on_home_page=True)
+        return [itm for itm in qs
+                if itm.get_status(user) != constants.QUESTIONNAIRE_COMPLETED]
+
+
 class EUNutritionQuiz(Questionnaire):
     """ Defines a model to be used to present EU Nutrition surveys linked to
         a Post. Adds a description field to display in a banner.
     """
     post = models.ForeignKey(
-        'post.Post', 
+        'post.Post',
         blank=False,
         related_name='quiz_post')
     banner_description = models.TextField(blank=False)
+    show_on_home_page = models.BooleanField(default=False)
+
+    objects = EUQuizManager()
 
     class Meta:
         verbose_name = 'EU Nutrition Quiz'
