@@ -94,10 +94,6 @@ class EUNutritionQuiz(Questionnaire):
     """ Defines a model to be used to present EU Nutrition surveys linked to
         a Post. Adds a description field to display in a banner.
     """
-    post = models.ForeignKey(
-        'post.Post',
-        blank=False,
-        related_name='quiz_post')
     banner_description = models.TextField(blank=False)
     show_on_home_page = models.BooleanField(default=False)
 
@@ -106,6 +102,34 @@ class EUNutritionQuiz(Questionnaire):
     class Meta:
         verbose_name = 'EU Nutrition Quiz'
         verbose_name_plural = 'EU Nutrition Quizzes'
+
+    def get_status(self, user):
+        """ Check the status of the EUQuiz for the user. Don't check the
+            declined flag in the user profile.
+        """
+        qs = self.answersheet_set.filter(user=user.id)
+        if not qs.exists():
+            return constants.QUESTIONNAIRE_PENDING
+        else:
+            return qs[0].get_status()
+        return constants.QUESTIONNAIRE_PENDING
+
+
+class EUQuizToPost(models.Model):
+    """ Use a similar method to NavigationLink in mama to achieve the link
+        between a Post and a Quiz
+    """
+    post = models.ForeignKey(
+        'post.Post',
+        related_name="post_euquiz_set"
+    )
+    euquiz = models.ForeignKey(
+        EUNutritionQuiz,
+        related_name="euquiz_post_set"
+    )
+
+    def __unicode__(self):
+        return self.euquiz.title
 
 
 class QuestionnaireHolodeckKeys(models.Model):

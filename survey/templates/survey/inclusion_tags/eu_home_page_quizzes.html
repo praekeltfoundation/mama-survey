@@ -7,8 +7,8 @@
           {{ survey.banner_description|linebreaks }}
         </div>
         <div class="meta">
-          Click <a href="{% url survey:survey_action survey.id %}">here</a> to
-          participate in the survey. By participating, you stand a chance to
+          <a href="{% url survey:survey_form survey.id %}">Click here to
+          participate</a> in the survey. By participating, you stand a chance to
           win airtime!
         </div>
       </div>
