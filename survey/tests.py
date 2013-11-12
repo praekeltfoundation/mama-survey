@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 
 from survey import constants
 from survey.management.commands import survey_answersheet_csv_export
-from survey.models import (Questionnaire, EUNutritionQuiz, MultiChoiceQuestion,
+from survey.models import (Questionnaire, ContentQuiz, MultiChoiceQuestion,
                            MultiChoiceOption, AnswerSheet, MultiChoiceAnswer)
 from post.models import Post
 
@@ -500,18 +500,18 @@ class SurveyCommandsTestCase(BaseSurveyTestCase):
         boss_man.delete()
 
 
-class EUQuizTestCase(BaseSurveyTestCase):
-    """ Test the functionality of the EU Survey Test Case
+class ContentQuizTestCase(BaseSurveyTestCase):
+    """ Test the functionality of the Content Linked Survey
     """
     @patch.object(User, 'get_profile')
-    def test_eu_quiz(self, get_profile):
+    def test_content_quiz(self, get_profile):
         get_profile.return_value = DummyProfile(False)
 
         boss_man = self.create_boss_man()
         questionnaire1 = self.create_questionnaire(boss_man)
         guinea_pig = self.create_guinea_pig('thepig')
 
-        # Create a post for the EU Quiz to hang off of
+        # Create a post for the Content Quiz to hang off of
         post = Post.objects.create(
             content='This is Test content',
             state='published',
@@ -520,27 +520,28 @@ class EUQuizTestCase(BaseSurveyTestCase):
             owner=boss_man
         )
 
-        # Create an inactive EU Nutrition quiz
-        eu_quiz = EUNutritionQuiz.objects.create(
-            banner_description='This is an EU Nutrition banner',
-            introduction_text='EU Intro text',
-            thank_you_text='EU Thank you',
+        # Create an inactive Content quiz
+        content_quiz = ContentQuiz.objects.create(
+            banner_description='This is an Content banner',
+            introduction_text='Content Intro text',
+            thank_you_text='Content Thank you',
             created_by=boss_man,
             active=False
         )
-        eu_question1 = eu_quiz.multichoicequestion_set.create(
+        content_question1 = content_quiz.multichoicequestion_set.create(
             question_order=0,
-            question_text='EU Question 1')
-        eu_option1 = eu_question1.multichoiceoption_set.create(
+            question_text='Content Question 1')
+        content_option1 = content_question1.multichoiceoption_set.create(
             option_order=0,
-            option_text='EU Option 1',
+            option_text='Content Option 1',
             is_correct_option=False)
-        eu_option2 = eu_question1.multichoiceoption_set.create(
+        content_option2 = content_question1.multichoiceoption_set.create(
             option_order=1,
-            option_text='EU Option 2',
+            option_text='Content Option 2',
             is_correct_option=True)
 
-        # Check that we get the active questionnaire instance, and not the EU
+        # Check that we get the active questionnaire instance, and not the
+        # Content
         # Quiz instance.
         questionnaire1.active = True
         questionnaire1.save()
@@ -548,10 +549,10 @@ class EUQuizTestCase(BaseSurveyTestCase):
             Questionnaire.objects.questionnaire_for_user(guinea_pig),
             questionnaire1)
 
-        # Set the active flag to True for the EU Quiz, and check that we still
-        # get the normal questionnaire as the next one.
-        eu_quiz.active = True
-        eu_quiz.save()
+        # Set the active flag to True for the Content Quiz, and check that we
+        # still get the normal questionnaire as the next one.
+        content_quiz.active = True
+        content_quiz.save()
         self.assertEqual(
             Questionnaire.objects.questionnaire_for_user(guinea_pig),
             questionnaire1)
@@ -559,16 +560,16 @@ class EUQuizTestCase(BaseSurveyTestCase):
         # Check that we don't get quizzes on the home page that don't have the
         # flag set.
         self.assertEqual(
-            EUNutritionQuiz.objects.home_page_quizzes(guinea_pig),
+            ContentQuiz.objects.home_page_quizzes(guinea_pig),
             [])
 
-        # Check that we get only EU quizzes on the home page, when getting what
-        # is available for the user.
-        eu_quiz.show_on_home_page = True
-        eu_quiz.save()
+        # Check that we get only Content quizzes on the home page, when getting
+        # what is available for the user.
+        content_quiz.show_on_home_page = True
+        content_quiz.save()
         self.assertIn(
-            eu_quiz,
-            EUNutritionQuiz.objects.home_page_quizzes(guinea_pig))
+            content_quiz,
+            ContentQuiz.objects.home_page_quizzes(guinea_pig))
 
         boss_man.delete()
         questionnaire1.delete()

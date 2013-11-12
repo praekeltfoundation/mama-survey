@@ -77,35 +77,35 @@ class Questionnaire(models.Model):
         return self.multichoicequestion_set.count()
 
 
-class EUQuizManager(models.Manager):
+class ContentQuizManager(models.Manager):
     """ Model manager for questionnaire models. Used mainly to determine if a
         questionnaire is available for a given user.
     """
 
     def home_page_quizzes(self, user):
-        """ Return EU Nutrition quizzes that needs to show on the home page.
+        """ Return content linked quizzes that needs to show on the home page.
         """
         qs = self.get_query_set().filter(active=True, show_on_home_page=True)
         return [itm for itm in qs
                 if itm.get_status(user) != constants.QUESTIONNAIRE_COMPLETED]
 
 
-class EUNutritionQuiz(Questionnaire):
-    """ Defines a model to be used to present EU Nutrition surveys linked to
+class ContentQuiz(Questionnaire):
+    """ Defines a model to be used to present questionnaires linked to
         a Post. Adds a description field to display in a banner.
     """
     banner_description = models.TextField(blank=False)
     show_on_home_page = models.BooleanField(default=False)
 
-    objects = EUQuizManager()
+    objects = ContentQuizManager()
 
     class Meta:
-        verbose_name = 'EU Nutrition Quiz'
-        verbose_name_plural = 'EU Nutrition Quizzes'
+        verbose_name = 'Content Linked Quiz'
+        verbose_name_plural = 'Content Linked Quizzes'
 
     def get_status(self, user):
-        """ Check the status of the EUQuiz for the user. Don't check the
-            declined flag in the user profile.
+        """ Check the status of the content linked quiz for the user. Don't
+            check the declined flag in the user profile.
         """
         qs = self.answersheet_set.filter(user=user.id)
         if not qs.exists():
@@ -115,21 +115,21 @@ class EUNutritionQuiz(Questionnaire):
         return constants.QUESTIONNAIRE_PENDING
 
 
-class EUQuizToPost(models.Model):
+class ContentQuizToPost(models.Model):
     """ Use a similar method to NavigationLink in mama to achieve the link
         between a Post and a Quiz
     """
     post = models.ForeignKey(
         'post.Post',
-        related_name="post_euquiz_set"
+        related_name="post_quiz_set"
     )
-    euquiz = models.ForeignKey(
-        EUNutritionQuiz,
-        related_name="euquiz_post_set"
+    quiz = models.ForeignKey(
+        ContentQuiz,
+        related_name="quiz_post_set"
     )
 
     def __unicode__(self):
-        return self.euquiz.title
+        return self.quiz.title
 
 
 class QuestionnaireHolodeckKeys(models.Model):

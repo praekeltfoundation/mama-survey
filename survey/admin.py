@@ -6,7 +6,7 @@ from django.conf.urls.defaults import patterns, url
 from django.http import HttpResponse
 
 from survey import constants
-from survey.models import (Questionnaire, EUNutritionQuiz, MultiChoiceQuestion,
+from survey.models import (Questionnaire, ContentQuiz, MultiChoiceQuestion,
                            MultiChoiceOption, QuestionnaireHolodeckKeys,
                            AnswerSheet, MultiChoiceAnswer)
 
@@ -34,10 +34,10 @@ class QuestionnaireAdmin(admin.ModelAdmin):
 admin.site.register(Questionnaire, QuestionnaireAdmin)
 
 
-class EUQuizAdmin(QuestionnaireAdmin):
+class ContentQuizAdmin(QuestionnaireAdmin):
     pass
 
-admin.site.register(EUNutritionQuiz, EUQuizAdmin)
+admin.site.register(ContentQuiz, ContentQuizAdmin)
 
 
 class MultiChoiceAnswerAdmin(admin.TabularInline):
