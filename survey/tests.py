@@ -522,7 +522,6 @@ class EUQuizTestCase(BaseSurveyTestCase):
 
         # Create an inactive EU Nutrition quiz
         eu_quiz = EUNutritionQuiz.objects.create(
-            post=post,
             banner_description='This is an EU Nutrition banner',
             introduction_text='EU Intro text',
             thank_you_text='EU Thank you',
