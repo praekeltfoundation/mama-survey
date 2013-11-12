@@ -36,6 +36,7 @@ def show_EU_nutrition_quizzes(context):
         })
     return context
 
+
 @register.inclusion_tag('survey/inclusion_tags/eu_home_page_quizzes.html',
                         takes_context=True)
 def post_EU_nutrition_quizzes(context, post):
