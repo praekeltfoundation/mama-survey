@@ -54,8 +54,11 @@ class Command(BaseCommand):
         qs = AnswerSheet.objects.all().order_by(
             'questionnaire', 'user')
         for sheet in qs:
-            data = [sheet.user.username, 
-                    sheet.user.profile.mobile_number,
+            user = sheet.user
+            msisdn = user.profile.mobile_number
+            if msisdn is None:
+                msisdn = u'Unknown'
+            data = [user.username, msisdn,
                     sheet.questionnaire.title,
                     "%s" % sheet.date_created,
                     sheet.get_status_text(),
