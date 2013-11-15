@@ -14,7 +14,7 @@ class QuestionnaireManager(models.Manager):
     def questionnaire_for_user(self, user):
         """ Determine if a questionnaire is available for a given user
         """
-        if not user.get_profile().decline_surveys:
+        if not user.profile.decline_surveys:
             qs = self.get_query_set().filter(active=True)
             for itm in qs:
                 # look for a questionnaire with available questions
@@ -62,7 +62,7 @@ class Questionnaire(models.Model):
 
     def get_status(self, user):
         try:
-            if user.get_profile().decline_surveys:
+            if user.profile.decline_surveys:
                 return constants.QUESTIONNAIRE_REJECTED
         except ObjectDoesNotExist:
             pass

@@ -41,7 +41,7 @@ class Command(BaseCommand):
         writer = UnicodeWriter(outfile)
 
         # construct the header line
-        header_line = ['User', 'Questionnaire', 'Date Submitted',
+        header_line = ['User', 'msisdn', 'Questionnaire', 'Date Submitted',
                        'Status', 'Score']
         for idx in range(max_answers):
             header_line.append('Question %s' % (idx+1))
@@ -54,7 +54,9 @@ class Command(BaseCommand):
         qs = AnswerSheet.objects.all().order_by(
             'questionnaire', 'user')
         for sheet in qs:
-            data = [sheet.user.username, sheet.questionnaire.title,
+            data = [sheet.user.username, 
+                    sheet.user.profile.mobile_number,
+                    sheet.questionnaire.title,
                     "%s" % sheet.date_created,
                     sheet.get_status_text(),
                     "%s" % sheet.calculate_score()
