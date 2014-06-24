@@ -8,6 +8,6 @@ install:
     - pip install coveralls coverage --use-wheel
     - pip install -r requirements.pip --use-wheel
 script:
-    - coverage run --source='survey' setup.py test
+    - coverage run --source='.' setup.py test
 after_success:
     - coveralls
