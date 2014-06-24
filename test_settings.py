@@ -22,4 +22,4 @@ INSTALLED_APPS = (
 )
 
 STATIC_URL = ''
-
+SITE_ID = 1

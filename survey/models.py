@@ -18,7 +18,7 @@ class QuestionnaireManager(models.Manager):
             qs = self.get_query_set().filter(active=True)
             for itm in qs:
                 # look for a questionnaire with available questions
-                if itm.get_status(user) != constants.QUESTIONNAIRE_COMPLETED:
+                if itm.get_status(user) != constants.QUESTIONNAIRE_COMPLETED and itm.get_required_survey(user):
                     return itm
 
 
@@ -31,6 +31,7 @@ class Questionnaire(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User, blank=False)
     active = models.BooleanField(default=False)
+    target_survey_users = models.ForeignKey("self",blank=True,null=True)
 
     objects = QuestionnaireManager()
 
@@ -39,6 +40,19 @@ class Questionnaire(models.Model):
 
     class Meta:
         ordering = ('date_created',)
+
+    def get_required_survey(self, user):
+        if self.target_survey_users is None:
+            return True
+        else:
+            if user.is_anonymous():
+                return False
+            else:
+                required_survey = self.target_survey_users.get_status(user=user)
+                if required_survey == constants.QUESTIONNAIRE_COMPLETED:
+                    return True
+                else:
+                    return False
 
     def get_next_question_for_user(self, user):
         """ Retrieve the next unanswered question in the questionnaire
@@ -87,7 +101,7 @@ class ContentQuizManager(models.Manager):
         """
         qs = self.get_query_set().filter(active=True, show_on_home_page=True)
         return [itm for itm in qs
-                if itm.get_status(user) != constants.QUESTIONNAIRE_COMPLETED]
+                if itm.get_status(user) != constants.QUESTIONNAIRE_COMPLETED and itm.get_required_survey(user)]
 
 
 class ContentQuiz(Questionnaire):

@@ -1,11 +1,19 @@
 mama-survey
 ===========
 
+|travis|_ |coveralls|_
+
+.. |travis| image:: https://travis-ci.org/praekelt/mama-survey.png?branch=develop
+.. _travis: https://travis-ci.org/praekelt/mama-survey
+
+.. |coveralls| image:: https://coveralls.io/repos/praekelt/mama-survey/badge.png?branch=develop
+.. _coveralls: https://coveralls.io/r/praekelt/mama-survey
+
 mama-survey provides a simple multiple-choice question-only survey capability
-for the askMAMA mobi site. 
+for the askMAMA mobi site.
 
 Administrators can create questionnaires in the admin site, and view and export
-answers sheets. 
+answers sheets.
 
 The first available questionnaire will only be showed to users on their 2nd
 login. A link will also be displayed at the bottom of the home page.

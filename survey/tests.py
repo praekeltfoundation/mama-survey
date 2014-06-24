@@ -19,6 +19,9 @@ class DummyProfile(object):
 
     def __init__(self, decline):
         self.decline_surveys = decline
+        self.mobile_number = None
+
+User.profile = property(lambda u: DummyProfile(False))
 
 
 class BaseSurveyTestCase(unittest.TestCase):
@@ -141,6 +144,21 @@ class SurveyTestCase(BaseSurveyTestCase):
         self.assertEqual(
             Questionnaire.objects.questionnaire_for_user(guinea_pig),
             questionnaire2)
+
+        # create another questionnaire
+        questionnaire3 = Questionnaire.objects.create(
+            title='MAMA Questionnaire 3',
+            introduction_text='Intro text 3',
+            thank_you_text='Thank you thrice',
+            created_by=boss_man,
+            active=True)
+
+        #ensure questionnaire 2 cannot be answered if questionnaire 3 is unanswered
+        questionnaire2.target_survey_users = questionnaire3
+        questionnaire2.save()
+        self.assertEqual(
+            Questionnaire.objects.questionnaire_for_user(guinea_pig),
+            questionnaire3)
 
         questionnaire1.delete()
         boss_man.delete()
