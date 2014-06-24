@@ -30,9 +30,6 @@ the apporpriate holodeck metrics tracker on a regular basis.
 Dependencies
 ------------
 
-Python packages
-+++++++++++++++
-
 - django-userprofile
 
 
