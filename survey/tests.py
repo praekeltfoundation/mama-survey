@@ -19,6 +19,9 @@ class DummyProfile(object):
 
     def __init__(self, decline):
         self.decline_surveys = decline
+        self.mobile_number = None
+
+User.profile = property(lambda u: DummyProfile(False))
 
 
 class BaseSurveyTestCase(unittest.TestCase):

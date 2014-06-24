@@ -1,0 +1,11 @@
+language: python
+python:
+    - 2.7
+before_install:
+    - sudo apt-get update -qq
+    - sudo apt-get install -qq libtidy-dev libevent-dev python-dev
+install:
+    - pip install coveralls coverage --use-wheel
+    - pip install -r requirements.pip --use-wheel
+script:
+    - coverage run --source='survey' setup.py test
