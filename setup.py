@@ -5,7 +5,7 @@ setup(
     version='dev',
     description='Simple Survey Django Application for askMAMA',
     long_description=open('README.md', 'r').read() +
-            open('AUTHORS.md', 'r').read() + open('CHANGELOG.md', 'r').read(),
+            open('AUTHORS.rst', 'r').read() + open('CHANGELOG.rst', 'r').read(),
     author='Praekelt Foundation',
     author_email='dev@praekelt.com',
     license='BSD',
