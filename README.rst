@@ -30,29 +30,27 @@ the apporpriate holodeck metrics tracker on a regular basis.
 Dependencies
 ------------
 
-### System libraries
+Python packages
++++++++++++++++
 
-- None
-
-### Python packages
-
-- None
+- django-userprofile
 
 
 Usage
 -----
 
-For production, install the application in the askMAMA site with:
+For production, install the application in the askMAMA site with::
 
     python setup.py install
 
-For development, install the application in the askMAMA development site with:
+For development, install the application in the askMAMA development site with::
 
     python setup.py develop
 
-### Settings
+Settings
+++++++++
 
-The following settings must be added to settings.py:
+The following settings must be added to settings.py::
 
     TEMPLATE_DIRS += (
         os.path.join(PATH, "survey", "templates", "mobi"),
