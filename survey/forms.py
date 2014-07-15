@@ -1,6 +1,6 @@
 from django.utils.translation import ugettext_lazy as _
 from django.forms.widgets import RadioSelect
-
+from django.conf import settings
 from django import forms
 
 
@@ -43,6 +43,14 @@ class SurveyChoiceForm(forms.Form):
         label=_('Would you like to participate?'),
         initial='now')
 
+    def __init__(self, *args, **kwargs):
+        super(SurveyChoiceForm, self).__init__(*args, **kwargs)
+        if settings.ORIGIN == 'mxit':
+            self.fields['proceed_choice'] = forms.ChoiceField(
+                choices=_SURVEY_CHOICES,
+                label=_('Would you like to participate?'),
+                initial='now')
+
     as_div = as_div
 
 
@@ -73,5 +81,10 @@ class SurveyQuestionForm(SurveyQuestionMixin, forms.Form):
     survey_id = forms.Field(widget=forms.HiddenInput)
     question_id = forms.Field(widget=forms.HiddenInput)
     question = forms.ChoiceField(widget=RadioSelect)
+
+    def __init__(self, *args, **kwargs):
+        super(SurveyQuestionForm, self).__init__(*args, **kwargs)
+        if settings.ORIGIN == 'mxit':
+            self.fields['question'] = forms.ChoiceField()
 
     as_div = as_div
