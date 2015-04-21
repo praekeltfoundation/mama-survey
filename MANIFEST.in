@@ -3,4 +3,6 @@ include LICENSE
 include README.rst
 include CHANGELOG.rst
 include doc
+recursive-include survey/templates *
+recursive-include survey/templatetags *
 global-exclude *~
