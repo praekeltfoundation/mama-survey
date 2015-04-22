@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='mama-survey',
-    version='dev',
+    version='1.0.0',
     description='Simple Survey Django Application for askMAMA',
     long_description=open('README.rst', 'r').read() +
             open('AUTHORS.rst', 'r').read() + open('CHANGELOG.rst', 'r').read(),
@@ -23,7 +23,7 @@ setup(
     ],
     tests_require=[
         'django-setuptest==0.1.4',
-        'mock',
+        'mock'
     ],
     test_suite="setuptest.setuptest.SetupTestSuite",
     include_package_data=True,
