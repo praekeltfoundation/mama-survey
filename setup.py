@@ -14,7 +14,7 @@ setup(
     dependency_links=[
     ],
     install_requires=[
-        'django==1.4.5',
+        'django==1.11.23',
         'django-snippetscream==0.0.7',
         'south==0.8.2',
         'photon==0.0.5',
